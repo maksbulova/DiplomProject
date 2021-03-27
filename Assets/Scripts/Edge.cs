@@ -5,40 +5,41 @@ using UnityEngine.UI;
 
 public class Edge : MonoBehaviour
 {
-    private int flow;
-    public int maxFlow;
-    private Node nodeA, nodeB;
+    private float flow;
+    public float MaxFlow { get; private set; }
+    public Node nodeA, nodeB;
     private Graph globalGraph;
     private GameObject manager;
     private EdgeManager edgeManager;
     private LineRenderer line;
 
-
-    public int Flow
+    public (int, int) NodesID
     {
         get
         {
-            return flow;
+            return (nodeA.ID, nodeB.ID);
         }
+    }
+
+    public float Flow
+    {
+        get { return flow; }
         set
         {
-            if ((maxFlow - flow) >= value)
+            if ((MaxFlow - flow) >= value)
             {
                 flow += value;
             }
             else
             {
-                flow = maxFlow;
+                flow = MaxFlow;
             }
         }
     }
 
-    public int ResidualFlow
+    public float ResidualFlow
     {
-        get
-        {
-            return maxFlow - flow;
-        }
+        get { return MaxFlow - flow; }
     }
 
     // Start is called before the first frame update
@@ -61,9 +62,8 @@ public class Edge : MonoBehaviour
         nodeA = nodes.Item1;
         nodeB = nodes.Item2;
 
-        globalGraph.AddEdge(nodeA, nodeB, this);
+        globalGraph.AddEdge(this);
 
-        line.positionCount = 2; // это объявление вынесено из дроу на случай когда придется с движением узла перерисовывать линию
         DrawLine();
     }
 
@@ -74,13 +74,12 @@ public class Edge : MonoBehaviour
     }
 
 
-    Vector3 pos;
     private void DrawLine()
     {
-        pos = (nodeA.gameObject.transform.position + nodeB.gameObject.transform.position) / 2f;
+        Vector3 pos = (nodeA.gameObject.transform.position + nodeB.gameObject.transform.position) / 2f;
 
         gameObject.transform.position = pos;
-        // требует заранее заданого числа точек, это вынесено в инициализатор для оптимизации
+        line.positionCount = 2;
         line.SetPosition(0, nodeA.transform.position);
         line.SetPosition(1, nodeB.transform.position);
     }
@@ -88,6 +87,6 @@ public class Edge : MonoBehaviour
 
     public void SetMaxFlow()
     {
-        maxFlow = int.Parse(GameObject.Find("Canvas/InputField/Text").GetComponent<Text>().text);
+        MaxFlow = int.Parse(GameObject.Find("Canvas/InputField/Text").GetComponent<Text>().text);
     }
 }

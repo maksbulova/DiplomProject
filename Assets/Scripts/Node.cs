@@ -10,7 +10,8 @@ public class Node : MonoBehaviour
     private GameObject manager;
     private EdgeManager edgeManager;
 
-    private int id;
+    public int ID { get; private set; }
+
     public enum NodeType     // задается префабом
     {
         sourse,
@@ -32,9 +33,9 @@ public class Node : MonoBehaviour
     private void SetNode()
     {
         //  сздается префаб узла, потом уже существующий узел добавляется в граф
-        id = globalGraph.AddNode(this); 
+        ID = globalGraph.AddNode(this); 
 
-        string name = id.ToString();
+        string name = ID.ToString();
         switch (nodeType)
         {
             case NodeType.sourse:
@@ -52,18 +53,8 @@ public class Node : MonoBehaviour
         gameObject.transform.Find("Canvas").transform.Find("Text").GetComponent<Text>().text = name;
     }
 
-    void Update()
-    {
-    }
 
-
-    private void OnMouseDown()
-    {
-
-    }
-
-
-    private void OnMouseOver()
+    private void OnMouseOver()  // правый клик по узлу строит ребра
     {
         if (Input.GetMouseButtonDown(1))
         {
@@ -73,11 +64,11 @@ public class Node : MonoBehaviour
     }
 
 
-    private Vector3 pos;
-    private void OnMouseDrag()
+    private Vector2 pos;        
+    private void OnMouseDrag()  // драг узла
     {
         pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        pos.z = 0;
+        //pos.z = 0;
         transform.position = pos;
     }
 }

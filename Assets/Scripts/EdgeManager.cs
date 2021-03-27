@@ -45,14 +45,16 @@ public class EdgeManager : MonoBehaviour
     {
         // создает префаб ребра, но добавить его в граф уже в инициализации самого ребра
 
-        Instantiate(edgePrefab, Vector3.zero, Quaternion.identity); 
+        Edge edge = Instantiate(edgePrefab, Vector3.zero, Quaternion.identity).GetComponent<Edge>();
+        // edge.nodeA = A;
+        // edge.nodeB = B;
+        
     }
 
-    Node A, B;
     public (Node, Node) SetNodes()
     {
-        A = nodeA;
-        B = nodeB;
+        Node A = nodeA;
+        Node B = nodeB;
         nodeA = null;   // вот и пошли костыли
         nodeB = null;
 
