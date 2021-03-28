@@ -8,17 +8,6 @@ public class EdgeManager : MonoBehaviour
     private Node nodeA, nodeB;
     public GameObject edgePrefab;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void RecieveNode(Node node) // получив два узла делает между ними ребро
     {

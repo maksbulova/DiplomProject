@@ -5,70 +5,57 @@ using UnityEngine.UI;
 
 public class Node : MonoBehaviour
 {
+    private List<Edge> edgeList;
 
-    private Graph globalGraph;
-    private GameObject manager;
-    private EdgeManager edgeManager;
 
-    public int ID { get; private set; }
+    // private GameObject manager;
+    // private EdgeManager edgeManager;
 
-    public enum NodeType     // задается префабом
-    {
-        sourse,
-        sink, 
-        normal
-    }
-    public NodeType nodeType;
 
 
     void Start()
     {
-        globalGraph = GameObject.Find("Graph").GetComponent<Graph>();
-        manager = GameObject.Find("Managers");
-        edgeManager = manager.GetComponent<EdgeManager>();
+        // manager = GameObject.Find("Managers");
+        // edgeManager = manager.GetComponent<EdgeManager>();
 
-        SetNode();
     }
 
-    private void SetNode()
+    /*
+    вынес добавлеение в граф в ноде менеджер
+    public void Initialize(Graph graph)
     {
-        //  сздается префаб узла, потом уже существующий узел добавляется в граф
-        ID = globalGraph.AddNode(this); 
-
-        string name = ID.ToString();
-        switch (nodeType)
-        {
-            case NodeType.sourse:
-                name += " (s)";
-                break;
-            case NodeType.sink:
-                name += " (t)";
-                break;
-            case NodeType.normal:
-                break;
-            default:
-                break;
-        }
-
-        gameObject.transform.Find("Canvas").transform.Find("Text").GetComponent<Text>().text = name;
+        graph.AddNode(this); 
     }
+    */
+
+
+    public void AddEdge(Edge edge)
+    {
+        edgeList.Add(edge);
+    }
+
 
 
     private void OnMouseOver()  // правый клик по узлу строит ребра
     {
         if (Input.GetMouseButtonDown(1))
         {
-            edgeManager.RecieveNode(this);
+            // edgeManager.RecieveNode(this);
         }
 
     }
 
 
-    private Vector2 pos;        
+    /*
     private void OnMouseDrag()  // драг узла
     {
-        pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        //pos.z = 0;
+        Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         transform.position = pos;
+
+        foreach (Edge edge in edgeList)
+        {
+            edge.DrawLine();
+        }
     }
+    */
 }
