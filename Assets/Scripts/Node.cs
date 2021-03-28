@@ -14,17 +14,6 @@ public class Node : MonoBehaviour
     }
 
 
-
-    private void OnMouseOver()  // правый клик по узлу строит ребра
-    {
-        if (Input.GetMouseButtonDown(1))
-        {
-            // edgeManager.RecieveNode(this);
-        }
-
-    }
-
-
     
     private void OnMouseDrag()  // перемещение узла
     {

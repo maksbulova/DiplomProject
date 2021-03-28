@@ -35,9 +35,17 @@ public class BuildManager : MonoBehaviour
             {
                 managers.GetComponent<NodeManadger>().CreateNode(graph);
             }
-            else if (Input.GetMouseButtonDown(1) && ValidMousePosition())
+            else if (Input.GetMouseButtonDown(1))
             {
-
+                if (Physics.Raycast(ray: Camera.main.ScreenPointToRay(Input.mousePosition), hitInfo: out RaycastHit hit, maxDistance: 100))
+                {
+                    Node node = hit.collider.gameObject.GetComponent<Node>();
+                    if (node != null)
+                    {
+                        managers.GetComponent<EdgeManager>().RecieveNode(node, graph);
+                    } 
+                }
+                
             }
 
         }

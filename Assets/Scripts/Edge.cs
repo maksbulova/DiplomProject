@@ -25,22 +25,24 @@ public class Edge : MonoBehaviour
     void Start()
     {
 
-        // manager = GameObject.Find("Managers");
-        // edgeManager = manager.GetComponent<EdgeManager>();
-
-        line = gameObject.GetComponent<LineRenderer>();
+        // line = gameObject.GetComponent<LineRenderer>();
 
     }
 
 
-    private void Initialize(Graph graph, Node nodeA, Node nodeB, float cap)
+    public void Initialize(Graph graph, Node from, Node to, float cap=1)
     {
-        this.nodeA = nodeA;
-        this.nodeB = nodeB;
+        nodeA = from;
+        nodeB = to;
         capacity = cap;
         flow = 0;
 
-        graph.AddEdge(nodeA, nodeB, this);
+        nodeA.AddEdge(this);
+        nodeB.AddEdge(this);
+
+        line = gameObject.GetComponent<LineRenderer>();
+
+        // graph.AddEdge(nodeA, nodeB, this); это в менеджере!!
 
         DrawLine();
     }
@@ -48,12 +50,15 @@ public class Edge : MonoBehaviour
 
     public void DrawLine()
     {
-
         gameObject.transform.position = (nodeA.gameObject.transform.position + nodeB.gameObject.transform.position) / 2f;
-        line.positionCount = 2;
-        line.SetPosition(0, nodeA.transform.position);
-        line.SetPosition(1, nodeB.transform.position);
+        Vector3[] points = new Vector3[2] { nodeA.transform.position, nodeB.transform.position };
+        line.SetPositions(points);
     }
 
+
+    public void SetCapacity()
+    {
+
+    }
 
 }

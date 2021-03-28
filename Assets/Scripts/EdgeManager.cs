@@ -4,10 +4,17 @@ using UnityEngine;
 
 public class EdgeManager : MonoBehaviour
 {
+    public GameObject EdgeSetupPanel;
+
+    private GameObject edgeParent;
 
     private Node nodeA, nodeB;
     public GameObject edgePrefab;
 
+    private void Start()
+    {
+        edgeParent = GameObject.Find("Edges");
+    }
 
     public void RecieveNode(Node node, Graph graph) // получив два узла делает между ними ребро
     {
@@ -37,23 +44,18 @@ public class EdgeManager : MonoBehaviour
     public void CreateEdge(Node A, Node B, Graph graph)
     {
         Edge edge = Instantiate(edgePrefab, Vector3.zero, Quaternion.identity).GetComponent<Edge>();
-        edge.nodeA = A;
-        edge.nodeB = B;
+        edge.Initialize(graph, A, B);
 
-        edge.DrawLine();
+        edge.transform.SetParent(edgeParent.transform);
+
+        // edge.nodeA = A;
+        // edge.nodeB = B;
+
+        // edge.DrawLine();
 
         graph.AddEdge(A, B, edge);
     }
 
-    public (Node, Node) SetNodes()
-    {
-        Node A = nodeA;
-        Node B = nodeB;
-        nodeA = null;   // вот и пошли костыли
-        nodeB = null;
 
-        return (A, B); 
-
-    }
 
 }
