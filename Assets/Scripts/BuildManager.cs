@@ -29,30 +29,31 @@ public class BuildManager : MonoBehaviour
 
     private void Update()
     {
-        ValidMousePosition();
-
-        if (buildMode && Input.GetMouseButtonDown(0))
+        if (buildMode)
         {
-            managers.GetComponent<NodeManadger>().CreateNode(graph);
+            if (Input.GetMouseButtonDown(0) && ValidMousePosition())
+            {
+                managers.GetComponent<NodeManadger>().CreateNode(graph);
+            }
+            else if (Input.GetMouseButtonDown(1) && ValidMousePosition())
+            {
+
+            }
+
         }
 
     }
 
-    private void ValidMousePosition()
+    private bool ValidMousePosition()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Gizmos.DrawRay(ray);
-        Physics.Raycast(ray, out RaycastHit hit);
-
-        Debug.Log(hit.collider);
+        return !Physics.Raycast(ray: Camera.main.ScreenPointToRay(Input.mousePosition), hitInfo: out RaycastHit hit, maxDistance: 100);
     }
-
 
     public void BuildButton()
     {
         buildMode = !buildMode;
 
-        if (buildButton)
+        if (buildMode)
         {
             panel.color = buildModeColor;
         }

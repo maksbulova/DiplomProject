@@ -5,28 +5,7 @@ using UnityEngine.UI;
 
 public class Node : MonoBehaviour
 {
-    private List<Edge> edgeList;
-
-
-    // private GameObject manager;
-    // private EdgeManager edgeManager;
-
-
-
-    void Start()
-    {
-        // manager = GameObject.Find("Managers");
-        // edgeManager = manager.GetComponent<EdgeManager>();
-
-    }
-
-    /*
-    вынес добавлеение в граф в ноде менеджер
-    public void Initialize(Graph graph)
-    {
-        graph.AddNode(this); 
-    }
-    */
+    private List<Edge> edgeList = new List<Edge>();
 
 
     public void AddEdge(Edge edge)
@@ -46,8 +25,8 @@ public class Node : MonoBehaviour
     }
 
 
-    /*
-    private void OnMouseDrag()  // драг узла
+    
+    private void OnMouseDrag()  // перемещение узла
     {
         Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         transform.position = pos;
@@ -57,5 +36,5 @@ public class Node : MonoBehaviour
             edge.DrawLine();
         }
     }
-    */
+    
 }

@@ -9,7 +9,7 @@ public class EdgeManager : MonoBehaviour
     public GameObject edgePrefab;
 
 
-    public void RecieveNode(Node node) // получив два узла делает между ними ребро
+    public void RecieveNode(Node node, Graph graph) // получив два узла делает между ними ребро
     {
         if (nodeA == null)
         {
@@ -25,19 +25,24 @@ public class EdgeManager : MonoBehaviour
             {
                 nodeB = node;
 
-                CreateEdge(nodeA, nodeB);
+                CreateEdge(nodeA, nodeB, graph);
+
+                nodeA = null;
+                nodeB = null;
+
             }
         }
     }
 
-    public void CreateEdge(Node A, Node B)
+    public void CreateEdge(Node A, Node B, Graph graph)
     {
-        // создает префаб ребра, но добавить его в граф уже в инициализации самого ребра
-
         Edge edge = Instantiate(edgePrefab, Vector3.zero, Quaternion.identity).GetComponent<Edge>();
-        // edge.nodeA = A;
-        // edge.nodeB = B;
-        
+        edge.nodeA = A;
+        edge.nodeB = B;
+
+        edge.DrawLine();
+
+        graph.AddEdge(A, B, edge);
     }
 
     public (Node, Node) SetNodes()
