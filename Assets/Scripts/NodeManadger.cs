@@ -16,9 +16,10 @@ public class NodeManadger : MonoBehaviour
     {
         Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        GameObject node = Instantiate(nodePrefab, pos, Quaternion.identity);
-        node.transform.SetParent(nodeParent.transform);
+        Node node = Instantiate(nodePrefab, pos, Quaternion.identity).GetComponent<Node>();
+        node.gameObject.transform.SetParent(nodeParent.transform);
 
-        graph.AddNode(node.GetComponent<Node>());
+        node.Initialize(graph);
+        // graph.AddNode(node.GetComponent<Node>());
     }
 }

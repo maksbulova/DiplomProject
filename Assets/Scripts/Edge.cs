@@ -2,21 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Globalization;
 
 public class Edge : MonoBehaviour
 {
     public Node nodeA, nodeB;
-    private float flow, capacity;
-    private float weight;
+    public float flow, capacity;
+    public float weight;
     private Text capacityInputField;
 
     private LineRenderer line;
-
-
-
-    // private GameObject manager;
-    // private EdgeManager edgeManager;
-
 
     public float ResidualFlow
     {
@@ -42,12 +37,10 @@ public class Edge : MonoBehaviour
         nodeA.AddEdge(this);
         nodeB.AddEdge(this);
 
-        
+        graph.AddEdge(from, to, this);
 
         line = gameObject.GetComponent<LineRenderer>();
         capacityInputField = transform.Find("Canvas/InputField/Text").GetComponent<Text>();
-
-        // graph.AddEdge(nodeA, nodeB, this); это в менеджере!!
 
         DrawEdge();
     }
@@ -65,9 +58,19 @@ public class Edge : MonoBehaviour
     }
 
 
+    // виклик кнопкою
     public void SetCapacity()
     {
-        capacity = float.Parse(capacityInputField.text);
-    }
+        if (capacityInputField.text.Length == 0)
+        {
+            capacity = 1;
+        }
+        else
+        {
+            capacity = float.Parse(capacityInputField.text, CultureInfo.InvariantCulture.NumberFormat);
+        }
 
+        capacityInputField.text = capacity.ToString(); // TODO не работает, вообще исправь чтоб запись через точку работала а не только запятую
+    }
+    
 }

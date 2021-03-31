@@ -14,6 +14,12 @@ public class Node : MonoBehaviour
     }
 
 
+    public void Initialize(Graph graph)
+    {
+        graph.AddNode(this);
+    }
+
+
     
     private void OnMouseDrag()  // перемещение узла
     {

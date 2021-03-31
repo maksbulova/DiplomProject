@@ -2,17 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Analysis : MonoBehaviour
+public static class Analysis
 {
-    // Start is called before the first frame update
-    void Start()
+    public static LinkedList<Node> AStar(Graph graph, Node start, Node finish)
     {
-        
+        LinkedList<Node> way = new LinkedList<Node>();
+
+
+
+        return null;
     }
 
-    // Update is called once per frame
-    void Update()
+    public static void MaxFlow(Graph graph, Node start, Node finish)
     {
-        
+        // Форда-Фалкерсона
+
+        // 1 обнуляємо усі потоки
+        foreach (List<(Node, Edge)> node in graph.nodeList.Values)
+        {
+            foreach ((Node, Edge) edge in node)
+            {
+                edge.Item2.flow = 0;
+            }
+        }
+
+        // 2 
+    }
+
+    private static Graph ResudalGraph(Graph initialGraph)
+    {
+        Graph resudalGraph = new Graph();
+
+        return null;
     }
 }

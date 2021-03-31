@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Graph : MonoBehaviour
 {
-    private Dictionary<Node, List<(Node, Edge)>> nodeList = new Dictionary<Node, List<(Node, Edge)>>();
+    public Dictionary<Node, List<(Node, Edge)>> nodeList = new Dictionary<Node, List<(Node, Edge)>>();
 
     public void AddNode(Node node)
     {
@@ -23,13 +23,5 @@ public class Graph : MonoBehaviour
         }
         
     }
-
-
-    /*
-    public LinkedList<Node> BFS(Node start, Node finish)
-    {
-        
-    }
-    */
 
 }

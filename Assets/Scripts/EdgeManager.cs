@@ -48,12 +48,7 @@ public class EdgeManager : MonoBehaviour
 
         edge.transform.SetParent(edgeParent.transform);
 
-        // edge.nodeA = A;
-        // edge.nodeB = B;
-
-        // edge.DrawLine();
-
-        graph.AddEdge(A, B, edge);
+        // graph.AddEdge(A, B, edge);
     }
 
 
