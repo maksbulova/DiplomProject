@@ -16,12 +16,16 @@ public class Graph : MonoBehaviour
 
     public void AddEdge(Node from, Node to, Edge edge)
     {
-        // from.AddEdge(edge);
+
         if (nodeList.ContainsKey(from) && !nodeList[from].Contains((to, edge)))
         {
             nodeList[from].Add((to, edge));
+
+            from.AddEdge(edge);
+            to.AddEdge(edge);
+
         }
-        
+
     }
 
 }

@@ -33,6 +33,25 @@ public static class Analysis
     {
         Graph resudalGraph = new Graph();
 
-        return null;
+        foreach (KeyValuePair<Node, List<(Node, Edge)>> node in resudalGraph.nodeList)
+        {
+            foreach ((Node, Edge) subNode in node.Value)
+            {
+                if (subNode.Item2.ResidualFlow > 0)
+                {
+                    resudalGraph.AddNode(node.Key);
+                    resudalGraph.AddEdge(node.Key, subNode.Item1, subNode.Item2);
+                }
+            }
+        }
+        if (resudalGraph.nodeList.Count > 0)
+        {
+            return resudalGraph;
+        }
+        else
+        {
+            return null;
+        }
+        
     }
 }

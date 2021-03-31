@@ -10,7 +10,11 @@ public class Node : MonoBehaviour
 
     public void AddEdge(Edge edge)
     {
-        edgeList.Add(edge);
+        if (!edgeList.Contains(edge))
+        {
+            edgeList.Add(edge);
+
+        }
     }
 
 
