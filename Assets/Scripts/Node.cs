@@ -22,7 +22,8 @@ public class Node : MonoBehaviour
 
         foreach (Edge edge in edgeList)
         {
-            edge.DrawLine();
+            edge.DrawEdge();
+            edge.CalculateWeight();
         }
     }
     

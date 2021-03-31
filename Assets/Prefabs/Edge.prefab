@@ -310,7 +310,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Enter text...
+  m_Text: C
 --- !u!1 &4455358419212722032
 GameObject:
   m_ObjectHideFlags: 0
@@ -421,6 +421,7 @@ GameObject:
   - component: {fileID: 4455358419261513680}
   - component: {fileID: 4455358419261513687}
   - component: {fileID: 729103185836012218}
+  - component: {fileID: 1571523477994775518}
   m_Layer: 0
   m_Name: Edge
   m_TagString: Untagged
@@ -488,7 +489,7 @@ LineRenderer:
   - {x: 5.6974783, y: -1.8251643, z: 0}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.6
+    widthMultiplier: 0.5
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -555,3 +556,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeA: {fileID: 0}
   nodeB: {fileID: 0}
+--- !u!65 &1571523477994775518
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4455358419261513686}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 0.5}
+  m_Center: {x: 0, y: 0, z: 0}
