@@ -76,8 +76,6 @@ public struct PriorityQueue<T>
 public static class Analysis
 {
 
-
-    
     public static LinkedList<Node> AStar(Graph graph, Node start, Node finish)
     {
         
@@ -124,8 +122,15 @@ public static class Analysis
 
     way:
         LinkedList<Node> way = new LinkedList<Node>();
+        Node cur = finish;
+        way.AddLast(cur);
+        do
+        {
+            cur = info[cur].Item1;
+            way.AddFirst(cur);
 
-
+        } while (cur != start);
+        return way;
 
         // эвристика узла - чем меньше тем приоритетнее
         float f(Node node)
