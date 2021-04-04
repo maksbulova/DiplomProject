@@ -14,6 +14,11 @@ public struct PriorityQueue<T>
         get { return priorityQueue.Count; }
     }
 
+    public bool Contains(T item)
+    {
+        return priorityQueue.ContainsKey(item);
+    }
+
     public void Enqueue(T element, float priority)
     {
         if (priorityQueue.ContainsKey(element))
@@ -72,45 +77,81 @@ public static class Analysis
 {
 
 
-    /*
+    
     public static LinkedList<Node> AStar(Graph graph, Node start, Node finish)
     {
-        LinkedList<Node> way = new LinkedList<Node>();
+        
 
         // узел для рассмотрения и его оценка
-        List<(Node, float)> open = new List<(Node, float)>() { (start, 0) };
+        PriorityQueue<Node> frontier = new PriorityQueue<Node>();
 
-        // рассмотренный узел и узел откуда мы пришли в рассмотренный
-        List<(Node, Node)> closed = new List<(Node, Node)>();
+        // откуда мы пришли в узел, и цена пути в него из старта
+        Dictionary<Node, (Node, float)> info = new Dictionary<Node, (Node, float)>();
 
-        while (open.Count > 0)
+        // рассмотренные узлы
+        // Dictionary<Node, Node> closed = new Dictionary<Node, Node>();
+        List<Node> closed = new List<Node>();
+
+        // начали рассматривать
+        frontier.Enqueue(start, 0);
+        while (frontier.Count > 0)
         {
-            foreach (var item in collection)
-            {
+            // перешли в узел с найменьшей оценкой
+            Node current = frontier.Dequeue(false).Key;
 
+            if (current == finish)
+            {
+                // возвращаем путь
+                goto way;
+            }
+            else
+            {
+                // перебираем соседей текущего узла
+                foreach (KeyValuePair<Node, Edge> neighbour in graph.nodeList[current])
+                {
+                    // оцениваем соседей и добавляем в очередь с приоритетом (фронтир)
+                    if (!frontier.Contains(neighbour.Key) && !closed.Contains(neighbour.Key))
+                    {
+                        // данные о соседе: откуда мы в него пришли и сколько это стоило (вес)
+                        info.Add(neighbour.Key, (current, info[current].Item2 + graph.nodeList[current][neighbour.Key].weight));
+                        frontier.Enqueue(neighbour.Key, f(neighbour.Key));
+                    }
+                }
             }
         }
 
         return null;
+
+    way:
+        LinkedList<Node> way = new LinkedList<Node>();
+
+
+
+        // эвристика узла - чем меньше тем приоритетнее
+        float f(Node node)
+        {
+            // евклидовр расстояние до финиша
+            float h = (node.transform.position - finish.transform.position).magnitude; // TODO точной длины ведь не надо?
+
+            // цена пути от старта
+            float g = info[node].Item2;
+
+            return h + g;
+        }
+
     }
-    */
-
-    public static LinkedList<Node> BFS(Graph graph, Node start, Node finish)
-    {
-
-    }
-
+    
 
     public static void MaxFlow(Graph graph, Node start, Node finish)
     {
         // Форда-Фалкерсона 
 
         // 1 обнуляємо усі потоки
-        foreach (List<(Node, Edge)> node in graph.nodeList.Values)
+        foreach (Dictionary<Node, Edge> node in graph.nodeList.Values)
         {
-            foreach ((Node, Edge) edge in node)
+            foreach (Edge edge in node.Values)
             {
-                edge.Item2.flow = 0;
+                edge.flow = 0;
             }
         }
 
@@ -121,14 +162,15 @@ public static class Analysis
     {
         Graph resudalGraph = new Graph();
 
-        foreach (KeyValuePair<Node, List<(Node, Edge)>> node in resudalGraph.nodeList)
+
+        foreach (KeyValuePair<Node, Dictionary<Node, Edge>> node in resudalGraph.nodeList)
         {
-            foreach ((Node, Edge) subNode in node.Value)
+            foreach (KeyValuePair<Node, Edge> subNode in node.Value)
             {
-                if (subNode.Item2.ResidualFlow > 0)
+                if (subNode.Value.ResidualFlow > 0)
                 {
                     resudalGraph.AddNode(node.Key);
-                    resudalGraph.AddEdge(node.Key, subNode.Item1, subNode.Item2);
+                    resudalGraph.AddEdge(node.Key, subNode.Key, subNode.Value);
                 }
             }
         }
