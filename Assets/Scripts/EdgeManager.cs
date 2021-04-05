@@ -8,7 +8,6 @@ public class EdgeManager : MonoBehaviour
 
     private GameObject edgeParent;
 
-    private Node nodeA, nodeB;
     public GameObject edgePrefab;
 
     private void Start()
@@ -16,30 +15,6 @@ public class EdgeManager : MonoBehaviour
         edgeParent = GameObject.Find("Edges");
     }
 
-    public void RecieveNode(Node node, Graph graph) // получив два узла делает между ними ребро
-    {
-        if (nodeA == null)
-        {
-            nodeA = node;
-        }
-        else
-        {
-            if (node == nodeA)
-            {
-                nodeA = null;
-            }
-            else
-            {
-                nodeB = node;
-
-                CreateEdge(nodeA, nodeB, graph);
-
-                nodeA = null;
-                nodeB = null;
-
-            }
-        }
-    }
 
     public void CreateEdge(Node A, Node B, Graph graph)
     {
@@ -49,6 +24,11 @@ public class EdgeManager : MonoBehaviour
         edge.transform.SetParent(edgeParent.transform);
 
         // graph.AddEdge(A, B, edge);
+    }
+
+    public void CreateEdge((Node, Node) nodePaar, Graph graph)
+    {
+        CreateEdge(nodePaar.Item1, nodePaar.Item2, graph);
     }
 
 

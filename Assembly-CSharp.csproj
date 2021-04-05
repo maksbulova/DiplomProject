@@ -57,12 +57,12 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Analysis.cs" />
     <Compile Include="Assets\Scripts\Edge.cs" />
+    <Compile Include="Assets\Scripts\CalculationsManager.cs" />
     <Compile Include="Assets\Scripts\Graph.cs" />
     <Compile Include="Assets\Scripts\NodeManadger.cs" />
-    <Compile Include="Assets\Scripts\BuildManager.cs" />
+    <Compile Include="Assets\Scripts\InputManager.cs" />
     <Compile Include="Assets\Scripts\Node.cs" />
     <Compile Include="Assets\Scripts\EdgeManager.cs" />
-    <Compile Include="Assets\Scripts\CalculationsManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

@@ -32,7 +32,7 @@ public class CalculationsManager : MonoBehaviour
             {
                 nodeB = node;
 
-                CreateEdge(nodeA, nodeB, graph);
+                // CreateEdge(nodeA, nodeB, graph);
 
                 nodeA = null;
                 nodeB = null;
@@ -42,5 +42,5 @@ public class CalculationsManager : MonoBehaviour
 
     }
 
-    public LinkedList<Node> way = Analysis.AStar(graph, )
+    // public LinkedList<Node> way = Analysis.AStar(graph, )
 }
