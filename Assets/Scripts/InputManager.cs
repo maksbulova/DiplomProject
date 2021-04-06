@@ -34,26 +34,50 @@ public class InputManager : MonoBehaviour
     private void Update()
     {
 
-        // левый клик по пустой позиции создает узел
-        if (Input.GetMouseButtonDown(0) && ValidMousePosition())
+        // левый клик
+        if (Input.GetMouseButtonDown(0))
         {
-            managers.GetComponent<NodeManadger>().CreateNode(graph);
+            switch (mode)
+            {
+                case Mode.idle:
+                    break;
+
+                case Mode.build:
+                    // левый клик по пустой позиции создает узел
+                    if (CheckMousePosition().collider == null)
+                        managers.GetComponent<NodeManadger>().CreateNode(graph);
+                    break;
+
+                case Mode.analize:
+                    break;
+
+                default:
+                    break;
+            }
+            
         }
         // правый клик по двум узлам создает ребро
         else if (Input.GetMouseButtonDown(1))
         {
-            if (Physics.Raycast(ray: Camera.main.ScreenPointToRay(Input.mousePosition), hitInfo: out RaycastHit hit, maxDistance: 100))
+
+            switch (mode)
             {
-                Node node = hit.collider.gameObject.GetComponent<Node>();
-                if (node != null)
-                {
-                    // записали узел
-                    RecieveNode(node, out (Node, Node) nodePaar);
-                    if (nodePaar != (null, null))
+                case Mode.idle:
+                    break;
+                case Mode.build:
+                    // выбираем два узла и строим ребро, сбрасываем выделение при клике по уже выбраном, либо вне узлов
+                    RaycastHit hit = CheckMousePosition();
+
+                    if (RecieveNode(hit.collider?.gameObject.GetComponent<Node>(), out (Node, Node) nodePaar))
                     {
                         managers.GetComponent<EdgeManager>().CreateEdge(nodePaar, graph);
                     }
-                }
+
+                    break;
+                case Mode.analize:
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -79,11 +103,18 @@ public class InputManager : MonoBehaviour
 
     }
 
+
+    // TODO выделить цветом выбраный узел
     private Node nodeA, nodeB;
-    public void RecieveNode(Node node, out (Node, Node) nodePaar) // получив два узла делает между ними ребро
+    public bool RecieveNode(Node node, out (Node, Node) nodePaar) // получив два узла делает между ними ребро
     {
         nodePaar = (null, null);
-        if (nodeA == null)
+        if (node == null)
+        {
+            nodeA = null;
+            nodeB = null;
+        }
+        else if (nodeA == null)
         {
             nodeA = node;
         }
@@ -102,15 +133,17 @@ public class InputManager : MonoBehaviour
                 nodeA = null;
                 nodeB = null;
 
+                return true;
             }
         }
+
+        return false;
     }
 
-
-
-    private bool ValidMousePosition()
+    private RaycastHit CheckMousePosition()
     {
-        return !Physics.Raycast(ray: Camera.main.ScreenPointToRay(Input.mousePosition), hitInfo: out RaycastHit hit, maxDistance: 100);
+        Physics.Raycast(ray: Camera.main.ScreenPointToRay(Input.mousePosition), hitInfo: out RaycastHit hit, maxDistance: 100);
+        return hit;
     }
 
     public void NormalButton()
