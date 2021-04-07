@@ -10,10 +10,19 @@ public class CalculationsManager : MonoBehaviour
     {
         LinkedList<Node> way = Analysis.AStar(graph, start, finish);
 
-        Debug.Log($"Найшвидший шлях з вузла {start.name} до вузла {finish.name}, це:");
-        foreach (Node node in way)
+        if (way == null)
         {
-            Debug.Log(node.name);
+            Debug.Log($"З вузла {start.name} до вузла {finish.name} не має шляху");
+
+        }
+        else
+        {
+            Debug.Log($"Найшвидший шлях з вузла {start.name} до вузла {finish.name}, це:");
+            foreach (Node node in way)
+            {
+                Debug.Log(node.name);
+            }
+
         }
     }
 

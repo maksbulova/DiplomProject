@@ -20,6 +20,7 @@ public class NodeManadger : MonoBehaviour
         node.gameObject.transform.SetParent(nodeParent.transform);
 
         node.Initialize(graph);
-        // graph.AddNode(node.GetComponent<Node>());
+
+        node.name =  "Вузол " + graph.nodeList.Keys.Count.ToString();
     }
 }

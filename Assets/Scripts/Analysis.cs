@@ -121,6 +121,7 @@ public static class Analysis
                         frontier.Enqueue(neighbour.Key, f(neighbour.Key));
                     }
                 }
+                closed.Add(current);
             }
         }
 
