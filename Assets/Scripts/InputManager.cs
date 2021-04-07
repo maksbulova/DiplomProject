@@ -56,29 +56,33 @@ public class InputManager : MonoBehaviour
             }
             
         }
-        // правый клик по двум узлам создает ребро
         else if (Input.GetMouseButtonDown(1))
         {
+            // выбираем два узла, сбрасываем выделение при клике по уже выбраном, либо вне узлов
+            RaycastHit hit = CheckMousePosition();
 
-            switch (mode)
+            if (RecieveNode(hit.collider?.gameObject.GetComponent<Node>(), out (Node, Node) nodePaar))
             {
-                case Mode.idle:
-                    break;
-                case Mode.build:
-                    // выбираем два узла и строим ребро, сбрасываем выделение при клике по уже выбраном, либо вне узлов
-                    RaycastHit hit = CheckMousePosition();
 
-                    if (RecieveNode(hit.collider?.gameObject.GetComponent<Node>(), out (Node, Node) nodePaar))
-                    {
+                switch (mode)
+                {
+                    case Mode.idle:
+                        break;
+                    case Mode.build:
                         managers.GetComponent<EdgeManager>().CreateEdge(nodePaar, graph);
-                    }
 
-                    break;
-                case Mode.analize:
-                    break;
-                default:
-                    break;
+                        break;
+                    case Mode.analize:
+                        managers.GetComponent<CalculationsManager>().ShowWay(graph, nodePaar.Item1, nodePaar.Item2);
+                        break;
+                    default:
+                        break;
+                }
+
             }
+
+
+
         }
 
 

@@ -21,6 +21,11 @@ public struct PriorityQueue<T>
 
     public void Enqueue(T element, float priority)
     {
+        if (priorityQueue == null)
+        {
+            priorityQueue = new Dictionary<T, float>();
+        }
+
         if (priorityQueue.ContainsKey(element))
         {
             priorityQueue[element] = priority; // TODO надо ли перезаписывать приоритет или сравнивать с текущим
@@ -92,6 +97,7 @@ public static class Analysis
 
         // начали рассматривать
         frontier.Enqueue(start, 0);
+        info.Add(start, (null, 0));
         while (frontier.Count > 0)
         {
             // перешли в узел с найменьшей оценкой
@@ -122,14 +128,14 @@ public static class Analysis
 
     way:
         LinkedList<Node> way = new LinkedList<Node>();
-        Node cur = finish;
-        way.AddLast(cur);
+        Node step = finish;
+        way.AddLast(step);
         do
         {
-            cur = info[cur].Item1;
-            way.AddFirst(cur);
+            step = info[step].Item1;
+            way.AddFirst(step);
 
-        } while (cur != start);
+        } while (step != start);
         return way;
 
         // эвристика узла - чем меньше тем приоритетнее
