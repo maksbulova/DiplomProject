@@ -81,6 +81,7 @@ public struct PriorityQueue<T>
 
 public static class Analysis
 {
+    
 
     public static LinkedList<Node> AStar(Graph graph, Node start, Node finish)
     {
@@ -157,6 +158,8 @@ public static class Analysis
 
     public static void MaxFlow(Graph graph, Node start, Node finish)
     {
+        EdgeManager edgeManager = GameObject.Find("Managers").GetComponent<EdgeManager>();
+
         // Форда-Фалкерсона 
 
         // 1 обнуляємо усі потоки
@@ -168,21 +171,29 @@ public static class Analysis
             }
         }
 
-        // Graph resudalGraph = ResudalGraph(graph); // проверь!!!!!!!!!!!!!!!!!!!!!
+        Graph resudalGraph = ResudalGraph(graph); // проверь
 
         // 2
 
-        LinkedList<Node> way = AStar(graph, start, finish);
+        LinkedList<Node> way = AStar(resudalGraph, start, finish);
 
+        int stop = 0;
         while (way != null)
         {
+            stop += 1;
+            if (stop >= 10)
+            {
+                Debug.Log("Стоп кран");
+                break;
+            }
+            
             // через знайдений коротший шлях пускаємо потік
 
             // знайдемо найменшу 
             float cMin = Mathf.Infinity;
             for (LinkedListNode<Node> node = way.First; node.Next != null; node = node.Next)
             {
-                float c = graph.nodeList[node.Value][node.Next.Value].capacity;
+                float c = resudalGraph.nodeList[node.Value][node.Next.Value].capacity;
                 cMin = Mathf.Min(cMin, c);
             }
 
@@ -191,18 +202,22 @@ public static class Analysis
             {
 
                 // resudalGraph.nodeList[node.Value][node.Next.Value].flow += cMin;
-                // TODO добавить обратное ребро!!!!!!!!!
-                graph.GetEdge(node.Value, node.Next.Value).flow += cMin;
-                graph.GetEdge(node.Next.Value, node.Value).flow -= cMin;
+                // TODO добавить обратное ребро!
+                // graph.GetEdge(node.Value, node.Next.Value).flow += cMin;
+                // graph.GetEdge(node.Next.Value, node.Value).flow -= cMin;
+
+                GetEdge(node.Value, node.Next.Value).flow += cMin;
+                GetEdge(node.Next.Value, node.Value).flow -= cMin;
+                
             }
 
-            // resudalGraph = ResudalGraph(resudalGraph);
+            resudalGraph = ResudalGraph(resudalGraph);
 
-            way = AStar(graph, start, finish);
+            way = AStar(resudalGraph, start, finish);
         }
 
         float sumFlow = 0;
-        foreach (KeyValuePair<Node, Dictionary < Node, Edge >> node in graph.nodeList)
+        foreach (KeyValuePair<Node, Dictionary < Node, Edge >> node in resudalGraph.nodeList)
         {
             foreach (Edge edge in node.Value.Values)
             {
@@ -211,35 +226,54 @@ public static class Analysis
         }
 
         Debug.Log($"Максимальний потік = {sumFlow}");
-    }
 
-    private static Graph ResudalGraph(Graph initialGraph)
-    {
-        // по идее он не создает новые узлы а ссылается на оригинальный граф
-        // так что и привязки к геймобджектам не надо
-
-        Graph resudalGraph = new Graph();
-
-
-        foreach (KeyValuePair<Node, Dictionary<Node, Edge>> node in resudalGraph.nodeList)
+        Edge GetEdge(Node nodeA, Node nodeB)
         {
-            foreach (KeyValuePair<Node, Edge> subNode in node.Value)
+            Edge edge;
+            if (resudalGraph.nodeList[nodeA].ContainsKey(nodeB))
             {
-                if (subNode.Value.ResidualFlow > 0)
+                edge = resudalGraph.nodeList[nodeA][nodeB];
+            }
+            else
+            {
+                edge = edgeManager.CreateEdge(nodeA, nodeB, resudalGraph);
+            }
+            return edge;
+        }
+
+
+        Graph ResudalGraph(Graph initialGraph)
+        {
+            // по идее он не создает новые узлы а ссылается на оригинальный граф
+            // так что и привязки к геймобджектам не надо
+
+            Graph resGraph = ScriptableObject.CreateInstance("Graph") as Graph;
+
+
+
+            foreach (KeyValuePair<Node, Dictionary<Node, Edge>> node in initialGraph.nodeList)
+            {
+                foreach (KeyValuePair<Node, Edge> subNode in node.Value)
                 {
-                    resudalGraph.AddNode(node.Key);
-                    resudalGraph.AddEdge(node.Key, subNode.Key, subNode.Value);
+                    if (subNode.Value.ResidualFlow > 0)
+                    {
+                        resGraph.AddNode(node.Key);
+                        resGraph.AddNode(subNode.Key);
+                        resGraph.AddEdge(node.Key, subNode.Key, subNode.Value);
+                    }
                 }
             }
+            if (resGraph.nodeList.Count > 0)
+            {
+                return resGraph;
+            }
+            else
+            {
+                return null;
+            }
+
         }
-        if (resudalGraph.nodeList.Count > 0)
-        {
-            return resudalGraph;
-        }
-        else
-        {
-            return null;
-        }
-        
+
     }
+
 }

@@ -11,20 +11,18 @@ public class InputManager : MonoBehaviour
 
     private GameObject managers;
 
+    [SerializeField]
     private Graph graph;
 
     public Color normalModeColor, buildModeColor, analizeModeColor;
     private Image panel;
-    // private Button buildButton, analizeButton;
 
     private void Start()
     {
         managers = GameObject.Find("Managers");
 
-        graph = GameObject.Find("MainGraph").GetComponent<Graph>();
+        // graph = GameObject.Find("MainGraph").GetComponent<Graph>();
 
-        // buildButton = GameObject.Find("Canvas/Panel/BuildModeButton").GetComponent<Button>();
-        // analizeButton = GameObject.Find("Canvas/Panel/AnalizeModeButton").GetComponent<Button>();
 
         panel = GameObject.Find("Canvas/Panel").GetComponent<Image>();
 

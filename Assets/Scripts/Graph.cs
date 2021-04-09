@@ -2,27 +2,13 @@
 using System.Diagnostics;
 using UnityEngine;
 
-public class Graph : MonoBehaviour
+[CreateAssetMenu(fileName = "Graph", menuName = "ScriptableObjects/Graph", order = 1)]
+public class Graph : ScriptableObject
 {
-    // public Dictionary<Node, List<(Node, Edge)>> nodeList = new Dictionary<Node, List<(Node, Edge)>>();
+
     public Dictionary<Node, Dictionary<Node, Edge>> nodeList = new Dictionary<Node, Dictionary<Node, Edge>>();
 
-    public Edge GetEdge(Node from, Node to)
-    {
-        Edge edge;
-        if (nodeList[from].ContainsKey(to))
-        {
-            edge = nodeList[from][to];
-        }
-        else
-        {
 
-            edge = new Edge();
-            edge.Initialize(this, from, to);
-            
-        }
-        return edge;
-    }
 
     public void AddNode(Node node)
     {

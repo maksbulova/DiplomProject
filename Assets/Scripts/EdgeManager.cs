@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class EdgeManager : MonoBehaviour
 {
-    public GameObject EdgeSetupPanel;
-
     private GameObject edgeParent;
 
     public GameObject edgePrefab;
@@ -16,13 +14,14 @@ public class EdgeManager : MonoBehaviour
     }
 
 
-    public void CreateEdge(Node A, Node B, Graph graph)
+    public Edge CreateEdge(Node A, Node B, Graph graph)
     {
         Edge edge = Instantiate(edgePrefab, Vector3.zero, Quaternion.identity).GetComponent<Edge>();
         edge.Initialize(graph, A, B);
 
         edge.transform.SetParent(edgeParent.transform);
 
+        return edge;
         // graph.AddEdge(A, B, edge);
     }
 

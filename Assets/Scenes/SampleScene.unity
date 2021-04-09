@@ -248,7 +248,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ce8386fa4f598543ace6b1ef3016be8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EdgeSetupPanel: {fileID: 0}
   edgePrefab: {fileID: 4455358419261513686, guid: 40c3be2bbb7545746a2f4af1e34dcaac, type: 3}
 --- !u!114 &268995093
 MonoBehaviour:
@@ -262,6 +261,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d29ccf5b1fba38049ba190b14a792864, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  graph: {fileID: 11400000, guid: 86c8560bb0324734296a9163e752fcbb, type: 2}
   normalModeColor: {r: 0.5568628, g: 0.69411767, b: 0.6156863, a: 1}
   buildModeColor: {r: 0.35686275, g: 0.21568628, b: 0.34509805, a: 1}
   analizeModeColor: {r: 0.25882354, g: 0.29803923, b: 0.99215686, a: 1}
@@ -934,7 +934,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1445406535}
-  - component: {fileID: 1445406534}
   m_Layer: 0
   m_Name: MainGraph
   m_TagString: Untagged
@@ -942,18 +941,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1445406534
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1445406533}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 739242e97866e4d4ba114d75cb2ffddf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1445406535
 Transform:
   m_ObjectHideFlags: 0
