@@ -73,7 +73,8 @@ public class InputManager : MonoBehaviour
 
                         break;
                     case Mode.analize:
-                        managers.GetComponent<CalculationsManager>().ShowWay(graph, nodePaar.Item1, nodePaar.Item2);
+                        // managers.GetComponent<CalculationsManager>().ShowWay(graph, nodePaar.Item1, nodePaar.Item2);
+                        Analysis.MaxFlow(graph, nodePaar.Item1, nodePaar.Item2);
                         break;
                     default:
                         break;

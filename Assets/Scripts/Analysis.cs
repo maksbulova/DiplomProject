@@ -28,7 +28,8 @@ public struct PriorityQueue<T>
 
         if (priorityQueue.ContainsKey(element))
         {
-            priorityQueue[element] = priority; // TODO надо ли перезаписывать приоритет или сравнивать с текущим
+            // TODO надо ли перезаписывать приоритет или сравнивать с текущим
+            // priorityQueue[element] = priority;
         }
         else
         {
@@ -143,7 +144,7 @@ public static class Analysis
         float f(Node node)
         {
             // евклидовр расстояние до финиша
-            float h = (node.transform.position - finish.transform.position).magnitude; // TODO точной длины ведь не надо?
+            float h = (node.transform.position - finish.transform.position).magnitude; // sqrmagnitude не подходит
 
             // цена пути от старта
             float g = info[node].Item2;
@@ -167,11 +168,56 @@ public static class Analysis
             }
         }
 
-        // 2 
+        // Graph resudalGraph = ResudalGraph(graph); // проверь!!!!!!!!!!!!!!!!!!!!!
+
+        // 2
+
+        LinkedList<Node> way = AStar(graph, start, finish);
+
+        while (way != null)
+        {
+            // через знайдений коротший шлях пускаємо потік
+
+            // знайдемо найменшу 
+            float cMin = Mathf.Infinity;
+            for (LinkedListNode<Node> node = way.First; node.Next != null; node = node.Next)
+            {
+                float c = graph.nodeList[node.Value][node.Next.Value].capacity;
+                cMin = Mathf.Min(cMin, c);
+            }
+
+            // збільшуємо поток на шляху
+            for (LinkedListNode<Node> node = way.First; node.Next != null; node = node.Next)
+            {
+
+                // resudalGraph.nodeList[node.Value][node.Next.Value].flow += cMin;
+                // TODO добавить обратное ребро!!!!!!!!!
+                graph.GetEdge(node.Value, node.Next.Value).flow += cMin;
+                graph.GetEdge(node.Next.Value, node.Value).flow -= cMin;
+            }
+
+            // resudalGraph = ResudalGraph(resudalGraph);
+
+            way = AStar(graph, start, finish);
+        }
+
+        float sumFlow = 0;
+        foreach (KeyValuePair<Node, Dictionary < Node, Edge >> node in graph.nodeList)
+        {
+            foreach (Edge edge in node.Value.Values)
+            {
+                sumFlow += edge.flow;
+            }
+        }
+
+        Debug.Log($"Максимальний потік = {sumFlow}");
     }
 
     private static Graph ResudalGraph(Graph initialGraph)
     {
+        // по идее он не создает новые узлы а ссылается на оригинальный граф
+        // так что и привязки к геймобджектам не надо
+
         Graph resudalGraph = new Graph();
 
 

@@ -18,12 +18,6 @@ public class Edge : MonoBehaviour
         get { return capacity - flow; }
     }
 
-    void Start()
-    {
-
-        
-
-    }
 
 
     public void Initialize(Graph graph, Node from, Node to, float cap=1)
