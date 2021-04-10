@@ -10,6 +10,7 @@ public class Edge : MonoBehaviour
     public float flow, capacity;
     public float weight;
     private Text capacityInputField;
+    private Text flowText;
 
     private LineRenderer line;
 
@@ -35,6 +36,7 @@ public class Edge : MonoBehaviour
 
         line = gameObject.GetComponent<LineRenderer>();
         capacityInputField = transform.Find("Canvas/InputField/Text").GetComponent<Text>();
+        flowText = transform.Find("Canvas/Panel/FlowText").GetComponent<Text>();
 
         DrawEdge();
     }
@@ -42,6 +44,11 @@ public class Edge : MonoBehaviour
     public void CalculateWeight()
     {
         weight = (nodeA.transform.position - nodeB.transform.position).magnitude;
+    }
+
+    public void SetFlowText()
+    {
+        flowText.text = flow.ToString();
     }
 
     public void DrawEdge()

@@ -229,16 +229,15 @@ public static class Analysis
             }
         }
 
-        /*
         foreach (KeyValuePair<Node, Dictionary < Node, Edge >> node in graph.nodeList)
         {
             foreach (Edge edge in node.Value.Values)
             {
-                sumFlow += edge.flow;
+                edge.SetFlowText();
             }
         }
-        */
-        // вероятно костыль, но рабочий
+        
+        // оказалось не костыль, а по определению
         foreach (Edge fin in graph.nodeList[start].Values)
         {
             sumFlow += fin.flow;
