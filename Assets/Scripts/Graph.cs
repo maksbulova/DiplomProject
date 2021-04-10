@@ -17,6 +17,14 @@ public class Graph : ScriptableObject
             nodeList.Add(node, new Dictionary<Node, Edge>());
         }
     }
+    public void RemoveNode(Node node) // не тестил
+    {
+        nodeList.Remove(node);
+        foreach (KeyValuePair<Node, Dictionary<Node, Edge>> nodes in nodeList)
+        {
+            nodes.Value.Remove(node);
+        }
+    }
 
     public void AddEdge(Node from, Node to, Edge edge)
     {
@@ -26,9 +34,12 @@ public class Graph : ScriptableObject
 
             from.AddEdge(edge);
             to.AddEdge(edge);
-
         }
+    }
 
+    public void RemoveEdge(Node from, Node to) // не тестил
+    {
+        nodeList[from].Remove(to);
     }
 
 }

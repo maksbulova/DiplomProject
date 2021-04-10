@@ -159,7 +159,7 @@ public static class Analysis
     public static void MaxFlow(Graph graph, Node start, Node finish)
     {
         EdgeManager edgeManager = GameObject.Find("Managers").GetComponent<EdgeManager>();
-
+        float sumFlow = 0;
         // Форда-Фалкерсона 
 
         // 1 обнуляємо усі потоки
@@ -181,7 +181,7 @@ public static class Analysis
         while (way != null)
         {
             stop += 1;
-            if (stop >= 10)
+            if (stop >= 100)
             {
                 Debug.Log("Стоп кран");
                 break;
@@ -193,7 +193,7 @@ public static class Analysis
             float cMin = Mathf.Infinity;
             for (LinkedListNode<Node> node = way.First; node.Next != null; node = node.Next)
             {
-                float c = resudalGraph.nodeList[node.Value][node.Next.Value].capacity;
+                float c = resudalGraph.nodeList[node.Value][node.Next.Value].ResidualFlow;
                 cMin = Mathf.Min(cMin, c);
             }
 
@@ -216,15 +216,33 @@ public static class Analysis
             way = AStar(resudalGraph, start, finish);
         }
 
-        float sumFlow = 0;
-        foreach (KeyValuePair<Node, Dictionary < Node, Edge >> node in resudalGraph.nodeList)
+        foreach (KeyValuePair<Node, Dictionary<Node, Edge>> node in resudalGraph.nodeList)
+        {
+            foreach (KeyValuePair<Node, Edge> subnode in node.Value)
+            {
+                Edge resudalEdge = resudalGraph.nodeList[node.Key][subnode.Key];
+                if (resudalEdge.capacity != 0)
+                {
+                    graph.nodeList[node.Key][subnode.Key].flow = resudalEdge.flow;
+                }
+
+            }
+        }
+
+        /*
+        foreach (KeyValuePair<Node, Dictionary < Node, Edge >> node in graph.nodeList)
         {
             foreach (Edge edge in node.Value.Values)
             {
                 sumFlow += edge.flow;
             }
         }
-
+        */
+        // вероятно костыль, но рабочий
+        foreach (Edge fin in graph.nodeList[start].Values)
+        {
+            sumFlow += fin.flow;
+        }
         Debug.Log($"Максимальний потік = {sumFlow}");
 
         Edge GetEdge(Node nodeA, Node nodeB)
@@ -236,7 +254,7 @@ public static class Analysis
             }
             else
             {
-                edge = edgeManager.CreateEdge(nodeA, nodeB, resudalGraph);
+                edge = edgeManager.CreateEdge(nodeA, nodeB, resudalGraph, 0);
             }
             return edge;
         }
@@ -261,6 +279,13 @@ public static class Analysis
                         resGraph.AddNode(subNode.Key);
                         resGraph.AddEdge(node.Key, subNode.Key, subNode.Value);
                     }
+                    /*
+                     * оно ведь и не добавтися
+                    else if(subNode.Value.ResidualFlow == 0)
+                    {
+                        resGraph.RemoveEdge(node.Key, subNode.Key); // ?????????????
+                    }
+                    */
                 }
             }
             if (resGraph.nodeList.Count > 0)
