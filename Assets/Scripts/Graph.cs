@@ -8,13 +8,15 @@ public class Graph : ScriptableObject
 
     public Dictionary<Node, Dictionary<Node, Edge>> nodeList = new Dictionary<Node, Dictionary<Node, Edge>>();
 
-
+    public int testAmount;
 
     public void AddNode(Node node)
     {
         if (!nodeList.ContainsKey(node))
         {
             nodeList.Add(node, new Dictionary<Node, Edge>());
+
+            testAmount++;
         }
     }
     public void RemoveNode(Node node) // не тестил

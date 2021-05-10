@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class EdgeManager : MonoBehaviour
 {
-    private GameObject edgeParent;
+    public GameObject edgeParent;
 
     public GameObject edgePrefab;
 
     private void Start()
     {
-        edgeParent = GameObject.Find("Edges");
+        // edgeParent = GameObject.Find("Edges");
     }
 
 

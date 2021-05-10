@@ -5,19 +5,18 @@ using UnityEngine;
 public class NodeManadger : MonoBehaviour
 {
     public GameObject nodePrefab;
-    private GameObject nodeParent;
+    public GameObject nodeParent;
 
     private void Start()
     {
-        nodeParent = GameObject.Find("Nodes");
+        // nodeParent = GameObject.Find("Nodes");
     }
 
     public void CreateNode(Graph graph)
     {
         Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        Node node = Instantiate(nodePrefab, pos, Quaternion.identity).GetComponent<Node>();
-        node.gameObject.transform.SetParent(nodeParent.transform);
+        Node node = Instantiate(nodePrefab, pos, Quaternion.identity, nodeParent.transform).GetComponent<Node>();
 
         node.Initialize(graph);
 

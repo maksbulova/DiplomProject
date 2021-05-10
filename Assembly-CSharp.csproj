@@ -63,6 +63,7 @@
     <Compile Include="Assets\Scripts\InputManager.cs" />
     <Compile Include="Assets\Scripts\Node.cs" />
     <Compile Include="Assets\Scripts\EdgeManager.cs" />
+    <Compile Include="Assets\Scripts\CameraControll.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

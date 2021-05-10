@@ -8,24 +8,23 @@ public class InputManager : MonoBehaviour
     public enum Mode { idle, build, analize }
     public static Mode mode = Mode.idle;
 
-
-    private GameObject managers;
-
     [SerializeField]
     private Graph graph;
 
     public Color normalModeColor, buildModeColor, analizeModeColor;
-    private Image panel;
+    
+
+    [Header("Cash")]
+    public GameObject managers;
+    public Image panel;
 
     private void Start()
     {
-        managers = GameObject.Find("Managers");
+        // managers = GameObject.Find("Managers");
 
         // graph = GameObject.Find("MainGraph").GetComponent<Graph>();
 
-
-        panel = GameObject.Find("Canvas/Panel").GetComponent<Image>();
-
+        // panel = GameObject.Find("Canvas/Panel").GetComponent<Image>();
     }
 
 
@@ -71,7 +70,7 @@ public class InputManager : MonoBehaviour
 
                         break;
                     case Mode.analize:
-                        // managers.GetComponent<CalculationsManager>().ShowWay(graph, nodePaar.Item1, nodePaar.Item2);
+                        //managers.GetComponent<CalculationsManager>().ShowWay(graph, nodePaar.Item1, nodePaar.Item2);
                         Analysis.MaxFlow(graph, nodePaar.Item1, nodePaar.Item2);
                         break;
                     default:
