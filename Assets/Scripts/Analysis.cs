@@ -159,6 +159,7 @@ public static class Analysis
     public static void MaxFlow(Graph graph, Node start, Node finish)
     {
         EdgeManager edgeManager = GameObject.Find("Managers").GetComponent<EdgeManager>();
+        List<Edge> temporaryEdges = new List<Edge>();
         float sumFlow = 0;
         // Форда-Фалкерсона 
 
@@ -168,6 +169,7 @@ public static class Analysis
             foreach (Edge edge in node.Values)
             {
                 edge.flow = 0;
+                edge.FlowColor();
             }
         }
 
@@ -216,6 +218,7 @@ public static class Analysis
             way = AStar(resudalGraph, start, finish);
         }
 
+        // перенос инфы из остаточного графа в основной
         foreach (KeyValuePair<Node, Dictionary<Node, Edge>> node in resudalGraph.nodeList)
         {
             foreach (KeyValuePair<Node, Edge> subnode in node.Value)
@@ -225,15 +228,22 @@ public static class Analysis
                 {
                     graph.nodeList[node.Key][subnode.Key].flow = resudalEdge.flow;
                 }
-
             }
         }
 
+        foreach (Edge e in temporaryEdges)
+        {
+            GameObject.Destroy(e.gameObject);
+        }
+        temporaryEdges.Clear();
+
+        // обновление интерфейса для все ребер
         foreach (KeyValuePair<Node, Dictionary < Node, Edge >> node in graph.nodeList)
         {
             foreach (Edge edge in node.Value.Values)
             {
                 edge.SetFlowText();
+                edge.FlowColor();
             }
         }
         
@@ -254,6 +264,7 @@ public static class Analysis
             else
             {
                 edge = edgeManager.CreateEdge(nodeA, nodeB, resudalGraph, 0);
+                temporaryEdges.Add(edge);
             }
             return edge;
         }

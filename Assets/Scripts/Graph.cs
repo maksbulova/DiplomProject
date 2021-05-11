@@ -16,7 +16,7 @@ public class Graph : ScriptableObject
         {
             nodeList.Add(node, new Dictionary<Node, Edge>());
 
-            testAmount++;
+            testAmount = nodeList.Count;
         }
     }
     public void RemoveNode(Node node) // не тестил

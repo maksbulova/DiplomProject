@@ -8,8 +8,7 @@ public class InputManager : MonoBehaviour
     public enum Mode { idle, build, analize }
     public static Mode mode = Mode.idle;
 
-    [SerializeField]
-    private Graph graph;
+    public Graph graph;
 
     public Color normalModeColor, buildModeColor, analizeModeColor;
     
@@ -82,27 +81,6 @@ public class InputManager : MonoBehaviour
 
 
         }
-
-
-        switch (mode)
-        {
-            case Mode.idle:
-                break;
-
-            case Mode.build:
-
-
-                break;
-
-            case Mode.analize:
-                break;
-
-            default:
-                break;
-        }
-
-
-
     }
 
 
@@ -144,7 +122,7 @@ public class InputManager : MonoBehaviour
 
     private RaycastHit CheckMousePosition()
     {
-        Physics.Raycast(ray: Camera.main.ScreenPointToRay(Input.mousePosition), hitInfo: out RaycastHit hit, maxDistance: 100);
+        Physics.Raycast(ray: Camera.main.ScreenPointToRay(Input.mousePosition), hitInfo: out RaycastHit hit);
         return hit;
     }
 

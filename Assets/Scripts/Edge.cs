@@ -35,9 +35,12 @@ public class Edge : MonoBehaviour
         graph.AddEdge(from, to, this);
 
         line = gameObject.GetComponent<LineRenderer>();
+        // line.colorGradient.colorKeys = new GradientColorKey[1];
+
         capacityInputField = transform.Find("Canvas/InputField/Text").GetComponent<Text>();
         flowText = transform.Find("Canvas/Panel/FlowText").GetComponent<Text>();
 
+        FlowColor();
         DrawEdge();
     }
 
@@ -74,4 +77,13 @@ public class Edge : MonoBehaviour
         capacityInputField.text = capacity.ToString(); // TODO не работает, вообще исправь чтоб запись через точку работала а не только запятую
     }
     
+    public void FlowColor()
+    {
+        float load = flow / capacity;
+        Color color = Color.Lerp(Color.white, Color.red, load);
+
+        line.startColor = color;
+        line.endColor = color;
+    }
+
 }
