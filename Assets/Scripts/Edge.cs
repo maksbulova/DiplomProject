@@ -4,8 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Globalization;
 
+[ExecuteAlways]
 public class Edge : MonoBehaviour
 {
+    public Graph manualGraph;
+
     public Node nodeA, nodeB;
     public float flow, capacity;
     public float weight;
@@ -19,10 +22,27 @@ public class Edge : MonoBehaviour
         get { return capacity - flow; }
     }
 
+    private void OnValidate()
+    {
+        if (nodeA != null && nodeB != null)
+        {
+            Initialize(manualGraph, nodeA, nodeB);
+        }
 
+    }
+
+    public void ManualInit()
+    {
+        if (nodeA != null && nodeB != null)
+        {
+            DeleteEdge();
+            Initialize(manualGraph, nodeA, nodeB);
+        }
+    }
 
     public void Initialize(Graph graph, Node from, Node to, float cap=1)
     {
+        manualGraph = graph;
         nodeA = from;
         nodeB = to;
         capacity = cap;
@@ -42,6 +62,19 @@ public class Edge : MonoBehaviour
 
         FlowColor();
         DrawEdge();
+    }
+
+    private void OnDestroy()
+    {
+        DeleteEdge();
+    }
+
+    public void DeleteEdge()
+    {
+        nodeA?.edgeList.Remove(this);
+        nodeB?.edgeList.Remove(this);
+        if(nodeA && nodeB)
+            manualGraph.RemoveEdge(nodeA, nodeB);
     }
 
     public void CalculateWeight()

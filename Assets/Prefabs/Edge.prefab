@@ -661,6 +661,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23406875d5a73644e862aab4320eac91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  manualGraph: {fileID: 11400000, guid: 86c8560bb0324734296a9163e752fcbb, type: 2}
   nodeA: {fileID: 0}
   nodeB: {fileID: 0}
   flow: 0

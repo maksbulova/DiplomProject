@@ -97,6 +97,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cbbf92ff0b2d9146acd83e54185752f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  edgeList: []
+  manualGraph: {fileID: 11400000, guid: 86c8560bb0324734296a9163e752fcbb, type: 2}
 --- !u!135 &5789783806428031857
 SphereCollider:
   m_ObjectHideFlags: 0

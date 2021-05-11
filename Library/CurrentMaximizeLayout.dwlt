@@ -218,23 +218,23 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 74560000
-      m_LastClickedID: 22132
-      m_ExpandedIDs: f45effff005ffffffec4ffff02c5ffff10c5ffffceccffff92560000b8560000c2560000
+      m_SelectedIDs: 
+      m_LastClickedID: 0
+      m_ExpandedIDs: 3c33ffff4833fffff45effff005ffffffec4ffff02c5ffff10c5ffffceccffff92560000b8560000c2560000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: Edge
-        m_OriginalName: Edge
+        m_Name: 
+        m_OriginalName: 
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
           y: 0
           width: 0
           height: 0
-        m_UserData: -41216
+        m_UserData: 0
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
-        m_OriginalEventType: 0
+        m_OriginalEventType: 11
         m_IsRenamingFilename: 0
         m_ClientGUIView: {fileID: 5}
       m_SearchString: 
@@ -309,9 +309,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 497.5, y: 0, z: 0}
+    m_Target: {x: 152.3339, y: 7.0493813, z: -14.552521}
     speed: 2
-    m_Value: {x: 497.5, y: 0, z: 0}
+    m_Value: {x: 152.3339, y: 7.0493813, z: -14.552521}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -362,9 +362,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0.0821655, y: 0.0761655, z: -0.006297996, w: 0.9936841}
   m_Size:
-    m_Target: 528.68353
+    m_Target: 1335.7699
     speed: 2
-    m_Value: 528.68353
+    m_Value: 1335.7699
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -572,9 +572,9 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 74560000
-    m_LastClickedInstanceID: 22132
-    m_HadKeyboardFocusLastEvent: 1
+    m_SelectedInstanceIDs: 
+    m_LastClickedInstanceID: 0
+    m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: c62300001e330000323b00002a2e00002c3600006c2e0000b42d0000c22d0000ca2e0000d2340000982d0000262e000028310000303e000000000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -647,8 +647,8 @@ MonoBehaviour:
     y: 0
     width: 363.19995
     height: 730.8
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 276, y: 71}
+  m_MaxSize: {x: 4001, y: 4021}
   m_ActualView: {fileID: 15}
   m_Panes:
   - {fileID: 15}
@@ -686,7 +686,7 @@ MonoBehaviour:
     m_ControlHash: -371814159
     m_PrefName: Preview_InspectorPreview
   m_LastInspectedObjectInstanceID: -1
-  m_LastVerticalScrollValue: 107.20001
+  m_LastVerticalScrollValue: 0
   m_AssetGUID: 
   m_InstanceID: 0
   m_LockTracker:

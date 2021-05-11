@@ -2,29 +2,32 @@
 using System.Diagnostics;
 using UnityEngine;
 
+[ExecuteAlways]
 [CreateAssetMenu(fileName = "Graph", menuName = "ScriptableObjects/Graph", order = 1)]
 public class Graph : ScriptableObject
 {
 
     public Dictionary<Node, Dictionary<Node, Edge>> nodeList = new Dictionary<Node, Dictionary<Node, Edge>>();
 
-    public int testAmount;
 
     public void AddNode(Node node)
     {
         if (!nodeList.ContainsKey(node))
         {
             nodeList.Add(node, new Dictionary<Node, Edge>());
-
-            testAmount = nodeList.Count;
         }
     }
     public void RemoveNode(Node node) // не тестил
     {
-        nodeList.Remove(node);
-        foreach (KeyValuePair<Node, Dictionary<Node, Edge>> nodes in nodeList)
+        if (nodeList.ContainsKey(node))
         {
-            nodes.Value.Remove(node);
+            foreach (KeyValuePair<Node, Dictionary<Node, Edge>> nodes in nodeList)
+            {
+                nodes.Value.Remove(node);
+            }
+
+            nodeList.Remove(node);
+
         }
     }
 
@@ -41,7 +44,10 @@ public class Graph : ScriptableObject
 
     public void RemoveEdge(Node from, Node to) // не тестил
     {
-        nodeList[from].Remove(to);
+        if (nodeList.ContainsKey(from) && nodeList[from].ContainsKey(to))
+        {
+            nodeList[from].Remove(to);
+        }
     }
 
 }
