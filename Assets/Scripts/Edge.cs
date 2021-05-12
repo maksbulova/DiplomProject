@@ -36,22 +36,18 @@ public class Edge : MonoBehaviour
         {
             Initialize(manualGraph, nodeA, nodeB);
         }
-
     }
 
-    [ContextMenu("Hard initialization")]
-    public void HardInit()
+
+
+    [ContextMenu("Manual initialization")]
+    public void ManualInit()
     {
         if (nodeA != null && nodeB != null)
         {
             DeleteEdge();
             Initialize(manualGraph, nodeA, nodeB);
         }
-    }
-
-    public void SoftInit()
-    {
-
     }
 
     public void Initialize(Graph graph, Node from, Node to)
@@ -171,6 +167,7 @@ public class Edge : MonoBehaviour
     [ContextMenu("ReDraw")]
     public void DrawEdge()
     {
+        line = GetComponent<LineRenderer>();
         line.widthMultiplier = Mathf.Clamp(capacity, 20, 100);
         Vector3 posA, posB;
 

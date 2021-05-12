@@ -50,6 +50,7 @@ public class Graph : ScriptableObject
         }
     }
 
+    
 
     [ContextMenu("Recalculate all")]
     public void ReGraph()

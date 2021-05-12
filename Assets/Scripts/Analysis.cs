@@ -158,6 +158,8 @@ public static class Analysis
 
     public static void MaxFlow(Graph graph, Node start, Node finish)
     {
+        graph.ReGraph();
+
         EdgeManager edgeManager = GameObject.Find("Managers").GetComponent<EdgeManager>();
         List<Edge> temporaryEdges = new List<Edge>();
         float sumFlow = 0;
@@ -219,6 +221,7 @@ public static class Analysis
         }
 
         // перенос инфы из остаточного графа в основной
+        /*
         foreach (KeyValuePair<Node, Dictionary<Node, Edge>> node in resudalGraph.nodeList)
         {
             foreach (KeyValuePair<Node, Edge> subnode in node.Value)
@@ -230,6 +233,7 @@ public static class Analysis
                 }
             }
         }
+        */
 
         foreach (Edge e in temporaryEdges)
         {
