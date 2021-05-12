@@ -16,7 +16,9 @@ public class Edge : MonoBehaviour
 
     private Text capacityInputField;
     private Text flowText;
-    
+
+    // запривать!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public Edge oppositeLine;
 
     private LineRenderer line;
 
@@ -34,6 +36,7 @@ public class Edge : MonoBehaviour
 
     }
 
+    [ContextMenu("Manual initialization")]
     public void ManualInit()
     {
         if (nodeA != null && nodeB != null)
@@ -46,8 +49,21 @@ public class Edge : MonoBehaviour
     public void Initialize(Graph graph, Node from, Node to, float cap=1)
     {
         manualGraph = graph;
-        nodeA = from;
-        nodeB = to;
+
+        // если в графе это ребро уже есть, то создает ему встречку
+        if (oppositeLine != null)
+        {
+            nodeA = to;
+            nodeB = from;
+
+            oppositeLine.oppositeLine = this;
+        }
+        else
+        {
+            nodeA = from;
+            nodeB = to;
+        }
+
         capacity = cap;
         flow = 0;
         CalculateWeight();
@@ -55,7 +71,7 @@ public class Edge : MonoBehaviour
         nodeA.AddEdge(this);
         nodeB.AddEdge(this);
 
-        graph.AddEdge(from, to, this);
+        graph.AddEdge(nodeA, nodeB, this);
 
         line = gameObject.GetComponent<LineRenderer>();
         // line.colorGradient.colorKeys = new GradientColorKey[1];
@@ -65,6 +81,31 @@ public class Edge : MonoBehaviour
 
         FlowColor();
         DrawEdge();
+
+        
+        if (twoSide)
+        {
+            // если встречки еще не уществует
+            if (oppositeLine == null)
+            {
+                oppositeLine = this;
+                // создает копию себя
+                oppositeLine = Instantiate(gameObject, gameObject.transform.parent).GetComponent<Edge>();
+                oppositeLine.oppositeLine = this;
+
+                oppositeLine.ManualInit();
+            }
+        }
+        else
+        {
+            if (oppositeLine != null)
+            {
+                // oppositeLine.DeleteEdge();
+                // DestroyImmediate(oppositeLine.gameObject);
+            }
+        }
+        
+
     }
 
 
@@ -88,6 +129,9 @@ public class Edge : MonoBehaviour
         nodeB?.edgeList.Remove(this);
         if(nodeA && nodeB)
             manualGraph.RemoveEdge(nodeA, nodeB);
+
+        if (oppositeLine != null)
+            oppositeLine.oppositeLine = null;
     }
 
     public void CalculateWeight()

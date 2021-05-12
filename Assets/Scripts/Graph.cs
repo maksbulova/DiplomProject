@@ -54,6 +54,8 @@ public class Graph : ScriptableObject
     [ContextMenu("Recalculate all")]
     public void ReGraph()
     {
+        nodeList.Clear();
+
         Edge[] edges = FindObjectsOfType<Edge>();
         Node[] nodes = FindObjectsOfType<Node>();
 

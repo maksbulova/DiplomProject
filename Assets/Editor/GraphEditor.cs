@@ -28,23 +28,28 @@ public class GraphEditor : Editor
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 
             EditorGUILayout.BeginHorizontal();
+            // из
             EditorGUILayout.LabelField(node.Key.name);
 
-            scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
+            //scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
             EditorGUILayout.BeginVertical();
 
             foreach (KeyValuePair<Node, Edge> subnode in node.Value)
             {
-                EditorGUILayout.BeginHorizontal();
+                
+                // EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField(subnode.Key.name);
                 EditorGUILayout.LabelField(subnode.Value.name);
-                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+                // EditorGUILayout.EndHorizontal();
+
+                // EditorGUILayout.LabelField(subnode.Key.name, subnode.Value.name);
             }
             
             EditorGUILayout.EndVertical();
 
-            EditorGUILayout.EndScrollView();
+            //EditorGUILayout.EndScrollView();
 
             EditorGUILayout.EndHorizontal();
             
