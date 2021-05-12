@@ -14,10 +14,10 @@ public class EdgeManager : MonoBehaviour
     }
 
 
-    public Edge CreateEdge(Node A, Node B, Graph graph, float capacity=1)
+    public Edge CreateEdge(Node A, Node B, Graph graph)
     {
         Edge edge = Instantiate(edgePrefab, Vector3.zero, Quaternion.identity).GetComponent<Edge>();
-        edge.Initialize(graph, A, B, capacity);
+        edge.Initialize(graph, A, B);
 
         edge.transform.SetParent(edgeParent.transform);
 

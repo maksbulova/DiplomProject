@@ -263,7 +263,8 @@ public static class Analysis
             }
             else
             {
-                edge = edgeManager.CreateEdge(nodeA, nodeB, resudalGraph, 0);
+                edge = edgeManager.CreateEdge(nodeA, nodeB, resudalGraph);
+                edge.capacity = 0;
                 temporaryEdges.Add(edge);
             }
             return edge;

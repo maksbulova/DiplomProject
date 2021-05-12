@@ -10,9 +10,12 @@ public class Edge : MonoBehaviour
     public Graph manualGraph;
 
     public Node nodeA, nodeB;
-    public float flow, capacity;
+    
+    public float flow;
+    [Delayed]
+    public float capacity;
     public float weight;
-    public bool twoSide = true;
+    public bool twoWay = true;
 
     private Text capacityInputField;
     private Text flowText;
@@ -36,8 +39,8 @@ public class Edge : MonoBehaviour
 
     }
 
-    [ContextMenu("Manual initialization")]
-    public void ManualInit()
+    [ContextMenu("Hard initialization")]
+    public void HardInit()
     {
         if (nodeA != null && nodeB != null)
         {
@@ -46,25 +49,19 @@ public class Edge : MonoBehaviour
         }
     }
 
-    public void Initialize(Graph graph, Node from, Node to, float cap=1)
+    public void SoftInit()
+    {
+
+    }
+
+    public void Initialize(Graph graph, Node from, Node to)
     {
         manualGraph = graph;
 
-        // если в графе это ребро уже есть, то создает ему встречку
-        if (oppositeLine != null && twoSide)
-        {
-            nodeA = to;
-            nodeB = from;
+        nodeA = from;
+        nodeB = to;
 
-            oppositeLine.oppositeLine = this;
-        }
-        else
-        {
-            nodeA = from;
-            nodeB = to;
-        }
 
-        capacity = cap;
         flow = 0;
         CalculateWeight();
 
@@ -74,7 +71,6 @@ public class Edge : MonoBehaviour
         graph.AddEdge(nodeA, nodeB, this);
 
         line = gameObject.GetComponent<LineRenderer>();
-        // line.colorGradient.colorKeys = new GradientColorKey[1];
 
         capacityInputField = transform.Find("Canvas/InputField/Text").GetComponent<Text>();
         flowText = transform.Find("Canvas/Panel/FlowText").GetComponent<Text>();
@@ -83,7 +79,7 @@ public class Edge : MonoBehaviour
         DrawEdge();
 
         
-        if (twoSide)
+        if (twoWay)
         {
             // если встречки еще не уществует
             if (oppositeLine == null)
@@ -93,7 +89,17 @@ public class Edge : MonoBehaviour
                 oppositeLine = Instantiate(gameObject, gameObject.transform.parent).GetComponent<Edge>();
                 oppositeLine.oppositeLine = this;
 
-                oppositeLine.ManualInit();
+                oppositeLine.Initialize(manualGraph, to, from);
+            }
+            else
+            {
+                if (oppositeLine.capacity != capacity)
+                {
+                    oppositeLine.capacity = this.capacity;
+                }
+
+                DrawEdge();
+                oppositeLine.DrawEdge();
             }
         }
         else
@@ -118,8 +124,21 @@ public class Edge : MonoBehaviour
     public void ReGraph()
     {
         if (nodeA && nodeB)
+        {
+            manualGraph.RemoveEdge(nodeA, nodeB);
             manualGraph.AddEdge(nodeA, nodeB, this);
+        }
+    }
 
+    [ContextMenu("Change direction")]
+    private void ChangeDir()
+    {
+        Node temp = nodeA;
+        nodeA = nodeB;
+        nodeB = temp;
+
+        ReGraph();
+        DrawEdge();
     }
 
 
@@ -152,8 +171,28 @@ public class Edge : MonoBehaviour
     [ContextMenu("ReDraw")]
     public void DrawEdge()
     {
-        gameObject.transform.position = (nodeA.gameObject.transform.position + nodeB.gameObject.transform.position) / 2f;
-        Vector3[] points = new Vector3[2] { nodeA.transform.position, nodeB.transform.position };
+        line.widthMultiplier = Mathf.Clamp(capacity, 20, 100);
+        Vector3 posA, posB;
+
+        if (twoWay)
+        {
+            posA = nodeA.gameObject.transform.position;
+            posB = nodeB.gameObject.transform.position;
+
+            Vector3 dir = posB - posA;
+            dir = new Vector3(dir.y, dir.x).normalized;
+
+            posA += dir * line.widthMultiplier;
+            posB += dir * line.widthMultiplier;
+        }
+        else
+        {
+            posA = nodeA.gameObject.transform.position;
+            posB = nodeB.gameObject.transform.position;
+        }
+
+        gameObject.transform.position = (posA + posB) / 2f;
+        Vector3[] points = new Vector3[2] { posA, posB };
         line.SetPositions(points);
     }
 

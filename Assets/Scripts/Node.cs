@@ -63,6 +63,7 @@ public class Node : MonoBehaviour
     [ContextMenu("Recalculate graph")]
     public void ReGraph()
     {
+        manualGraph.RemoveNode(this);
         manualGraph.AddNode(this);
     }
 
