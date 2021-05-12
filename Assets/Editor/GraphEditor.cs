@@ -36,9 +36,10 @@ public class GraphEditor : Editor
 
             foreach (KeyValuePair<Node, Edge> subnode in node.Value)
             {
-
+                EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField(subnode.Key.name);
                 EditorGUILayout.LabelField(subnode.Value.name);
+                EditorGUILayout.EndHorizontal();
             }
             
             EditorGUILayout.EndVertical();

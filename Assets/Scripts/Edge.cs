@@ -12,8 +12,11 @@ public class Edge : MonoBehaviour
     public Node nodeA, nodeB;
     public float flow, capacity;
     public float weight;
+    public bool twoSide = true;
+
     private Text capacityInputField;
     private Text flowText;
+    
 
     private LineRenderer line;
 

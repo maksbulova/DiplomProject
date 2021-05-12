@@ -667,6 +667,7 @@ MonoBehaviour:
   flow: 0
   capacity: 0
   weight: 0
+  twoSide: 1
 --- !u!65 &1571523477994775518
 BoxCollider:
   m_ObjectHideFlags: 0
