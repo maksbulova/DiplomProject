@@ -51,7 +51,7 @@ public class Edge : MonoBehaviour
         manualGraph = graph;
 
         // если в графе это ребро уже есть, то создает ему встречку
-        if (oppositeLine != null)
+        if (oppositeLine != null && twoSide)
         {
             nodeA = to;
             nodeB = from;
@@ -100,8 +100,13 @@ public class Edge : MonoBehaviour
         {
             if (oppositeLine != null)
             {
-                // oppositeLine.DeleteEdge();
-                // DestroyImmediate(oppositeLine.gameObject);
+                GameObject tempOpLine = oppositeLine.gameObject;
+                oppositeLine.DeleteEdge();
+
+                UnityEditor.EditorApplication.delayCall += () =>
+                {
+                    DestroyImmediate(tempOpLine);
+                };
             }
         }
         
