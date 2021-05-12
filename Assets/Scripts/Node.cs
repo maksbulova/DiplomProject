@@ -19,6 +19,7 @@ public class Node : MonoBehaviour
         }
     }
 
+
     private void Start()
     {
         ManualInit();
@@ -38,7 +39,6 @@ public class Node : MonoBehaviour
 
     private void OnDestroy()
     {
-        Debug.Log("destroy");
         DeleteNode();
     }
 
@@ -60,16 +60,29 @@ public class Node : MonoBehaviour
         manualGraph.RemoveNode(this);
     }
 
-    private void OnMouseDrag()  // перемещение узла
+    [ContextMenu("Recalculate graph")]
+    public void ReGraph()
     {
-        Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        transform.position = pos;
+        manualGraph.AddNode(this);
+    }
 
+    [ContextMenu("ReDraw")]
+    private void DrawEdges()
+    {
         foreach (Edge edge in edgeList)
         {
             edge.DrawEdge();
             edge.CalculateWeight();
         }
+
+    }
+
+    private void OnMouseDrag()  // перемещение узла
+    {
+        Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        transform.position = pos;
+
+        DrawEdges();
     }
     
 }

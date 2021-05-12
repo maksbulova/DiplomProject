@@ -50,4 +50,22 @@ public class Graph : ScriptableObject
         }
     }
 
+
+    [ContextMenu("Recalculate all")]
+    public void ReGraph()
+    {
+        Edge[] edges = FindObjectsOfType<Edge>();
+        Node[] nodes = FindObjectsOfType<Node>();
+
+        foreach (Node node in nodes)
+        {
+            node.ReGraph();
+        }
+
+        foreach (Edge edge in edges)
+        {
+            edge.ReGraph();
+        }
+    }
+
 }

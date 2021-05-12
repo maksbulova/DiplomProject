@@ -7,6 +7,8 @@ using UnityEditor;
 
 public class GraphEditor : Editor
 {
+    Vector2 scrollPos;
+
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
@@ -14,13 +16,40 @@ public class GraphEditor : Editor
         Graph script = (Graph)target;
 
         EditorGUILayout.LabelField("Nodes amount", script.nodeList.Count.ToString());
-        /*
+
+        EditorGUILayout.BeginVertical();
+
+        EditorGUILayout.LabelField("from", "to  by");
+
+        EditorGUILayout.Space();
+
         foreach (KeyValuePair<Node, Dictionary<Node, Edge>> node in script.nodeList)
         {
-            EditorGUILayout.LabelField()
-        }
-        */
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField(node.Key.name);
+
+            scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
+
+            EditorGUILayout.BeginVertical();
+
+            foreach (KeyValuePair<Node, Edge> subnode in node.Value)
+            {
+
+                EditorGUILayout.LabelField(subnode.Key.name);
+                EditorGUILayout.LabelField(subnode.Value.name);
+            }
+            
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.EndScrollView();
+
+            EditorGUILayout.EndHorizontal();
+            
+        }
+        
+        EditorGUILayout.EndVertical();
     }
 
 }

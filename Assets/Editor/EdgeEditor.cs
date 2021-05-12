@@ -10,7 +10,7 @@ public class EdgeEditor : Editor
     {
         DrawDefaultInspector();
 
-        Edge script = (Edge)target;
+        // Edge script = (Edge)target;
         /*
         if (GUILayout.Button("Manual init"))
         {

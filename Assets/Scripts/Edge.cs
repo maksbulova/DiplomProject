@@ -64,6 +64,16 @@ public class Edge : MonoBehaviour
         DrawEdge();
     }
 
+
+    [ContextMenu("Recalculate graph")]
+    public void ReGraph()
+    {
+        if (nodeA && nodeB)
+            manualGraph.AddEdge(nodeA, nodeB, this);
+
+    }
+
+
     private void OnDestroy()
     {
         DeleteEdge();
@@ -87,6 +97,7 @@ public class Edge : MonoBehaviour
         flowText.text = flow.ToString();
     }
 
+    [ContextMenu("ReDraw")]
     public void DrawEdge()
     {
         gameObject.transform.position = (nodeA.gameObject.transform.position + nodeB.gameObject.transform.position) / 2f;
