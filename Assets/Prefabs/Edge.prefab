@@ -678,9 +678,9 @@ MonoBehaviour:
   nodeA: {fileID: 0}
   nodeB: {fileID: 0}
   flow: 0
-  capacity: 0
+  capacity: 20
   weight: 0
-  twoSide: 1
+  twoWay: 1
   oppositeLine: {fileID: 0}
 --- !u!1 &7966081722800803766
 GameObject:

@@ -40,8 +40,8 @@ public class Edge : MonoBehaviour
 
 
 
-    [ContextMenu("Manual initialization")]
-    public void ManualInit()
+    [ContextMenu("Reboot")]
+    public void Reboot()
     {
         if (nodeA != null && nodeB != null)
         {
@@ -88,10 +88,17 @@ public class Edge : MonoBehaviour
                 oppositeLine.Initialize(manualGraph, to, from);
             }
             else
+            // встречка существует, обновить и её
             {
                 if (oppositeLine.capacity != capacity)
                 {
                     oppositeLine.capacity = this.capacity;
+                }
+
+                if (oppositeLine.nodeA != this.nodeB || oppositeLine.nodeB != this.nodeA)
+                {
+                    oppositeLine.DeleteEdge();
+                    oppositeLine.Initialize(manualGraph, to, from);
                 }
 
                 DrawEdge();
@@ -216,6 +223,24 @@ public class Edge : MonoBehaviour
 
         line.startColor = color;
         line.endColor = color;
+
+        /*
+        GradientColorKey[] colorKeys = new GradientColorKey[2];
+        GradientAlphaKey[] alphaKeys = new GradientAlphaKey[2];
+
+        
+        colorKeys[0].color = Color.red; 
+        colorKeys[0].time = 0; 
+        colorKeys[1].color = Color.red;
+        colorKeys[1].time = 1;
+
+        alphaKeys[0].alpha = 1;
+        alphaKeys[0].time = 0;
+        alphaKeys[1].alpha = 1;
+        alphaKeys[1].time = 1;
+
+        gameObject.GetComponent<LineRenderer>().colorGradient.SetKeys(colorKeys, alphaKeys);
+        */
     }
 
 }
