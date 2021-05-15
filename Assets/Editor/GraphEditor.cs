@@ -15,12 +15,17 @@ public class GraphEditor : Editor
 
         Graph script = (Graph)target;
 
-        EditorGUILayout.LabelField("Nodes amount", script.nodeList.Count.ToString());
+        EditorGUILayout.LabelField("Nodes amount: ", script.nodeList.Count.ToString());
+
+        int edgeAmount = 0;
+        foreach (KeyValuePair<Node, Dictionary<Node, Edge>> node in script.nodeList)
+        {
+            edgeAmount += node.Value.Count;
+        }
+        EditorGUILayout.LabelField("Edges amount: ", edgeAmount.ToString());
 
         EditorGUILayout.BeginVertical();
-
         EditorGUILayout.LabelField("from", "to  by");
-
         EditorGUILayout.Space();
 
         foreach (KeyValuePair<Node, Dictionary<Node, Edge>> node in script.nodeList)

@@ -682,6 +682,7 @@ MonoBehaviour:
   weight: 0
   twoWay: 1
   oppositeLine: {fileID: 0}
+  scaleFix: 0.579
 --- !u!1 &7966081722800803766
 GameObject:
   m_ObjectHideFlags: 0

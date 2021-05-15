@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Globalization;
+using System.Linq;
 
 [ExecuteAlways]
 public class Edge : MonoBehaviour
 {
+
     public Graph manualGraph;
 
     public Node nodeA, nodeB;
@@ -20,8 +22,9 @@ public class Edge : MonoBehaviour
     private Text capacityInputField;
     private Text flowText;
 
-    // запривать!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // запривать?
     public Edge oppositeLine;
+
 
     private LineRenderer line;
 
@@ -34,6 +37,7 @@ public class Edge : MonoBehaviour
     {
         if (nodeA != null && nodeB != null)
         {
+            DeleteEdge(false);
             Initialize(manualGraph, nodeA, nodeB);
         }
     }
@@ -45,13 +49,15 @@ public class Edge : MonoBehaviour
     {
         if (nodeA != null && nodeB != null)
         {
-            DeleteEdge();
+            DeleteEdge(false);
             Initialize(manualGraph, nodeA, nodeB);
         }
     }
 
     public void Initialize(Graph graph, Node from, Node to)
     {
+        DeleteEdge(false);
+
         manualGraph = graph;
 
         nodeA = from;
@@ -74,12 +80,41 @@ public class Edge : MonoBehaviour
         FlowColor();
         DrawEdge();
 
+        try
+        {
+            oppositeLine?.DrawEdge();
+        }
+        catch (MissingReferenceException)
+        {
+            Debug.LogWarning("Catched exeption!");
+            oppositeLine = null;
+            throw;
+        }
         
         if (twoWay)
         {
-            // если встречки еще не уществует
             if (oppositeLine == null)
             {
+                // ищем может встречка есть, но потерялась
+                IEnumerable<Edge> intersect = nodeA.edgeList.Intersect(nodeB.edgeList);
+                if (intersect != null)
+                {
+                    foreach (Edge edge in intersect)
+                    {
+                        if (edge != this)
+                        {
+                            oppositeLine = edge;
+                            edge.oppositeLine = this;
+                        }
+                    }
+                }
+            }
+
+
+            // если встречки еще не уществует
+            if (oppositeLine == null )
+            {
+
                 oppositeLine = this;
                 // создает копию себя
                 oppositeLine = Instantiate(gameObject, gameObject.transform.parent).GetComponent<Edge>();
@@ -97,7 +132,7 @@ public class Edge : MonoBehaviour
 
                 if (oppositeLine.nodeA != this.nodeB || oppositeLine.nodeB != this.nodeA)
                 {
-                    oppositeLine.DeleteEdge();
+                    oppositeLine.DeleteEdge(false);
                     oppositeLine.Initialize(manualGraph, to, from);
                 }
 
@@ -110,7 +145,7 @@ public class Edge : MonoBehaviour
             if (oppositeLine != null)
             {
                 GameObject tempOpLine = oppositeLine.gameObject;
-                oppositeLine.DeleteEdge();
+                oppositeLine.DeleteEdge(true);
 
                 UnityEditor.EditorApplication.delayCall += () =>
                 {
@@ -128,7 +163,7 @@ public class Edge : MonoBehaviour
     {
         if (nodeA && nodeB)
         {
-            manualGraph.RemoveEdge(nodeA, nodeB);
+            manualGraph.RemoveEdge(this);
             manualGraph.AddEdge(nodeA, nodeB, this);
         }
     }
@@ -147,23 +182,26 @@ public class Edge : MonoBehaviour
 
     private void OnDestroy()
     {
-        DeleteEdge();
+        DeleteEdge(true);
     }
 
-    public void DeleteEdge()
+    public void DeleteEdge(bool includingOppositeLine)
     {
         nodeA?.edgeList.Remove(this);
         nodeB?.edgeList.Remove(this);
-        if(nodeA && nodeB)
-            manualGraph.RemoveEdge(nodeA, nodeB);
+        manualGraph.RemoveEdge(this);
 
-        if (oppositeLine != null)
-            oppositeLine.oppositeLine = null;
+        if (includingOppositeLine)
+        {
+            if (oppositeLine != null)
+                oppositeLine.oppositeLine = null;
+            oppositeLine = null;
+        }
     }
 
     public void CalculateWeight()
     {
-        weight = (nodeA.transform.position - nodeB.transform.position).magnitude;
+        weight = (nodeA.transform.position - nodeB.transform.position).magnitude * 0.579f; // scale fix
     }
 
     public void SetFlowText()
@@ -172,7 +210,7 @@ public class Edge : MonoBehaviour
     }
 
     [ContextMenu("ReDraw")]
-    public void DrawEdge()
+    public void DrawEdge(bool both=true)
     {
         line = GetComponent<LineRenderer>();
         line.widthMultiplier = Mathf.Clamp(capacity, 20, 100);
@@ -184,10 +222,16 @@ public class Edge : MonoBehaviour
             posB = nodeB.gameObject.transform.position;
 
             Vector3 dir = posB - posA;
-            dir = new Vector3(dir.y, dir.x).normalized;
+            Vector3 offset = Vector3.Cross(dir, Vector3.back).normalized;
 
-            posA += dir * line.widthMultiplier;
-            posB += dir * line.widthMultiplier;
+            posA += offset * (line.widthMultiplier / 2 + 5);
+            posB += offset * (line.widthMultiplier / 2 + 5);
+
+            if (both)
+            {
+                oppositeLine?.DrawEdge(false);
+            }
+            
         }
         else
         {

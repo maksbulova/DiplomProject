@@ -33,13 +33,31 @@ public class Graph : ScriptableObject
 
     public void AddEdge(Node from, Node to, Edge edge)
     {
-        if (nodeList.ContainsKey(from) && !nodeList[from].ContainsValue(edge))
+        if (nodeList.ContainsKey(from))
         {
-            nodeList[from].Add(to, edge);
+            //  если между этими узлами ребро уже существует и оно не текущее, значит дубль пытается податься
+            if (nodeList[from].ContainsKey(to) && nodeList[from][to] != edge)
+            {
+                edge.DeleteEdge(true);
 
-            from.AddEdge(edge);
-            to.AddEdge(edge);
+                UnityEditor.EditorApplication.delayCall += () =>
+                {
+                    DestroyImmediate(edge.gameObject);
+                };
+
+            }
+            else
+            // такого ребра еще не существует
+            {
+                nodeList[from].Add(to, edge);
+
+                from.AddEdge(edge);
+                to.AddEdge(edge);
+
+            }
         }
+
+
     }
 
     public void RemoveEdge(Node from, Node to) // не тестил
@@ -50,6 +68,24 @@ public class Graph : ScriptableObject
         }
     }
 
+    public void RemoveEdge(Edge edge) // не тестил
+    {
+        foreach (KeyValuePair<Node, Dictionary<Node, Edge>> node in nodeList)
+        {
+            // мб эта проверка дублирует следующий перебор
+            if (node.Value.ContainsValue(edge))
+            {
+                foreach (KeyValuePair<Node, Edge> subnode in node.Value)
+                {
+                    if (subnode.Value == edge)
+                    {
+                        RemoveEdge(node.Key, subnode.Key);
+                        return;
+                    }
+                }
+            }
+        }
+    }
     
 
     [ContextMenu("Recalculate all")]
