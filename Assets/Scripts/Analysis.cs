@@ -316,4 +316,14 @@ public static class Analysis
 
     }
 
+
+    static float mu = 0.15f;
+    static float n = 4;
+    static float BPR(Edge edge)
+    {
+        float tFreeFlow = edge.weight / edge.speedLimit;
+
+        return tFreeFlow * (1 + mu * Mathf.Pow(edge.flow / edge.capacity, n));
+    }
+
 }

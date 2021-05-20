@@ -13,6 +13,7 @@ public class NodeEditor : Editor
     {
         DrawDefaultInspector();
 
+        GUILayout.Space(10f);
         Node script = (Node)target;
 
         if (GUILayout.Button("Redraw"))

@@ -11,6 +11,8 @@ public class EdgeEditor : Editor
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
+        GUILayout.Space(10f);
+
 
         Edge script = (Edge)target;
 

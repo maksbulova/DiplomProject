@@ -9,24 +9,22 @@ using System.Linq;
 public class Edge : MonoBehaviour
 {
     [Header("Параметри дороги")]
-    
+    [Delayed, Tooltip("В кожному напрямку")] public int lines;
+    [Delayed] public float speedLimit;
+    public bool twoWay = true;
 
+    [Space, Header("Параметри мережі")]
     public Graph manualGraph;
-
     public Node nodeA, nodeB;
-    
+
+    [Space, Header("Технічні дані (readonly!)")] // заприватить мб
     public float flow;
-    [Delayed]
     public float capacity;
     public float weight;
-    public bool twoWay = true;
+    public Edge oppositeLine;
 
     private Text capacityInputField;
     private Text flowText;
-
-    // запривать?
-    public Edge oppositeLine;
-
 
     private LineRenderer line;
 
@@ -125,10 +123,13 @@ public class Edge : MonoBehaviour
             else
             // встречка существует, обновить и её
             {
-                if (oppositeLine.capacity != capacity)
-                {
-                    oppositeLine.capacity = this.capacity;
-                }
+                if (oppositeLine.speedLimit != speedLimit)
+                    oppositeLine.speedLimit = this.speedLimit;
+
+                if (oppositeLine.lines != lines)
+                    oppositeLine.lines = this.lines;
+
+
 
                 if (oppositeLine.nodeA != this.nodeB || oppositeLine.nodeB != this.nodeA)
                 {
@@ -136,7 +137,7 @@ public class Edge : MonoBehaviour
                     oppositeLine.Initialize(manualGraph, to, from);
                 }
 
-                DrawEdge();
+                oppositeLine.CalculateCapacity();
                 oppositeLine.DrawEdge();
             }
         }
@@ -154,11 +155,9 @@ public class Edge : MonoBehaviour
             }
         }
 
+        CalculateCapacity();
         FlowColor();
         DrawEdge();
-
-
-
     }
 
 
@@ -217,7 +216,10 @@ public class Edge : MonoBehaviour
     public void DrawEdge(bool both=true)
     {
         line = GetComponent<LineRenderer>();
-        line.widthMultiplier = Mathf.Clamp(capacity, 20, 100);
+
+        float c = Mathf.InverseLerp(2000, 6000, capacity);
+        line.widthMultiplier = Mathf.Lerp(20, 100, c);
+
         Vector3 posA, posB;
 
         if (twoWay)
@@ -246,6 +248,20 @@ public class Edge : MonoBehaviour
         gameObject.transform.position = (posA + posB) / 2f;
         Vector3[] points = new Vector3[2] { posA, posB };
         line.SetPositions(points);
+    }
+
+
+    [Space, Header("Параметри функції пропускної здатності")]
+    [Range(0.2f, 0.8f), Delayed, Tooltip("Якість покриття. Значення 0.3-0.5 приблизно відповідають мокрому асфальту")]
+    public float phi = 0.6f;
+    public float heavyVehicleKoof = 1;
+    public void CalculateCapacity()
+    {
+        /*
+        capacity = lines * (3600 * speedLimit * phi) /
+            (heavyVehicleKoof * (phi * (speedLimit + 7) + 0.015f * Mathf.Pow(speedLimit, 2)));
+        */
+        capacity = lines * 2000;
     }
 
 
