@@ -46,14 +46,16 @@ public class Node : MonoBehaviour
     {
         foreach (Edge edge in edgeList)
         {
-            // edge.DeleteEdge();
-            if (edge.nodeA == this)
+            if (edge != null)
             {
-                edge.nodeA = null;
-            }
-            else if (edge.nodeB == this)
-            {
-                edge.nodeB = null;
+                if (edge.nodeA == this)
+                {
+                    edge.nodeA = null;
+                }
+                else if (edge.nodeB == this)
+                {
+                    edge.nodeB = null;
+                }
             }
         }
 
@@ -68,7 +70,7 @@ public class Node : MonoBehaviour
     }
 
     [ContextMenu("ReDraw")]
-    private void DrawEdges()
+    public void DrawEdges()
     {
         foreach (Edge edge in edgeList)
         {

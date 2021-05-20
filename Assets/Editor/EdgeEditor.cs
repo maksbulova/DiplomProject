@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 
 
-[CustomEditor(typeof(Edge))]
+[CustomEditor(typeof(Edge)), CanEditMultipleObjects]
 public class EdgeEditor : Editor
 {
 

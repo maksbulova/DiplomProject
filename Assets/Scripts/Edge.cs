@@ -8,6 +8,8 @@ using System.Linq;
 [ExecuteAlways]
 public class Edge : MonoBehaviour
 {
+    [Header("Параметри дороги")]
+    
 
     public Graph manualGraph;
 
@@ -77,8 +79,6 @@ public class Edge : MonoBehaviour
         capacityInputField = transform.Find("Canvas/InputField/Text").GetComponent<Text>();
         flowText = transform.Find("Canvas/Panel/FlowText").GetComponent<Text>();
 
-        FlowColor();
-        DrawEdge();
 
         try
         {
@@ -153,7 +153,11 @@ public class Edge : MonoBehaviour
                 };
             }
         }
-        
+
+        FlowColor();
+        DrawEdge();
+
+
 
     }
 
