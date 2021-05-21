@@ -8,7 +8,6 @@ public struct PriorityQueue<T>
 {
     private Dictionary<T, float> priorityQueue;
 
-
     public int Count
     {
         get { return priorityQueue.Count; }
@@ -37,7 +36,6 @@ public struct PriorityQueue<T>
         }
     }
 
-
     public KeyValuePair<T, float> Dequeue(bool maxPriority)
     {
         KeyValuePair<T, float> priorityElement;
@@ -64,7 +62,6 @@ public struct PriorityQueue<T>
         {
             return GetMin();
         }
-        
     }
 
     private KeyValuePair<T, float> GetMax()
@@ -76,7 +73,6 @@ public struct PriorityQueue<T>
     {
         return priorityQueue.Aggregate((m, n) => m.Value < n.Value ? m : n);
     }
-
 }
 
 public static class Analysis
@@ -126,7 +122,6 @@ public static class Analysis
                 closed.Add(current);
             }
         }
-
         return null;
 
     way:
@@ -139,6 +134,8 @@ public static class Analysis
             way.AddFirst(step);
 
         } while (step != start);
+
+
         return way;
 
         // эвристика узла - чем меньше тем приоритетнее
@@ -258,6 +255,7 @@ public static class Analysis
         }
         Debug.Log($"Максимальний потік = {sumFlow}");
 
+        // повертає ребро між вузлами, якзо такого нема - створює і повертає
         Edge GetEdge(Node nodeA, Node nodeB)
         {
             Edge edge;
@@ -317,13 +315,71 @@ public static class Analysis
     }
 
 
-    static float mu = 0.15f;
-    static float n = 4;
-    static float BPR(Edge edge)
+    private static float mu = 0.15f;
+    private static float n = 4;
+
+    // временные затраты от загружености дороги
+    public static float BPR(Edge edge)
     {
         float tFreeFlow = edge.weight / edge.speedLimit;
 
         return tFreeFlow * (1 + mu * Mathf.Pow(edge.flow / edge.capacity, n));
     }
 
+
+    // розподіл потоку по шляхам
+    public static void FlowDistribution(LinkedList<Node>[] ways, float odFLow,  Graph graph, float accuracy=50)
+    {
+        if (ways.Length == 1)
+        {
+            ModifyWay(ways[0], odFLow);
+        }
+        else
+        {
+            float flowDifference = Mathf.Infinity;
+            while (flowDifference > accuracy)
+            {
+                float[] waysPrices = new float[ways.Length];
+                for (int i = 0; i < ways.Length; i++)
+                {
+                    waysPrices[i] = WayPrice(ways[i]);
+                }
+                // номер найдовшого та найшвидшого шляхів
+                float maxWayPrice = waysPrices.Max();
+                float minWayPrice = waysPrices.Min();
+
+                int maxWayIndex = waysPrices.ToList().IndexOf(maxWayPrice);
+                int minxWayIndex = waysPrices.ToList().IndexOf(minWayPrice);
+
+                flowDifference = maxWayPrice - minWayPrice;
+
+                ModifyWay(ways[maxWayIndex], -flowDifference / 2);
+                ModifyWay(ways[minxWayIndex], flowDifference / 2);
+            }
+
+        }
+
+        // змінити потік по шляху
+        void ModifyWay(LinkedList<Node> way, float flow)
+        {
+            // збільшуємо поток на шляху
+            for (LinkedListNode<Node> node = way.First; node.Next != null; node = node.Next)
+            {
+                graph.nodeList[node.Value][node.Next.Value].flow += flow;
+            }
+        }
+
+        float WayPrice(LinkedList<Node> way)
+        {
+            float sumPrice = 0;
+            for (LinkedListNode<Node> node = way.First; node.Next != null; node = node.Next)
+            {
+                // sumCost += graph.nodeList[node.Value][node.Next.Value].weight;
+                sumPrice += BPR(graph.nodeList[node.Value][node.Next.Value]);
+            }
+
+            return sumPrice;
+        }
+
+    }
 }
