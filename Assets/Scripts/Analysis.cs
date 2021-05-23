@@ -77,12 +77,8 @@ public struct PriorityQueue<T>
 
 public static class Analysis
 {
-    
-
-    public static LinkedList<Node> AStar(Graph graph, Node start, Node finish)
+    public static LinkedList<Node> AStar(Graph graph, Node start, Node finish, bool loaded)
     {
-        
-
         // узел для рассмотрения и его оценка
         PriorityQueue<Node> frontier = new PriorityQueue<Node>();
 
@@ -114,8 +110,9 @@ public static class Analysis
                     // оцениваем соседей и добавляем в очередь с приоритетом (фронтир)
                     if (!frontier.Contains(neighbour.Key) && !closed.Contains(neighbour.Key))
                     {
-                        // данные о соседе: откуда мы в него пришли и сколько это стоило (вес)
-                        info.Add(neighbour.Key, (current, info[current].Item2 + graph.nodeList[current][neighbour.Key].weight));
+                        // данные о соседе: откуда мы в него пришли и сколько это стоило (вес или BPR)
+                        float weight = (loaded ? BPR(graph.nodeList[current][neighbour.Key]) : graph.nodeList[current][neighbour.Key].distance);
+                        info.Add(neighbour.Key, (current, info[current].Item2 + weight));
                         frontier.Enqueue(neighbour.Key, f(neighbour.Key));
                     }
                 }
@@ -176,7 +173,7 @@ public static class Analysis
 
         // 2
 
-        LinkedList<Node> way = AStar(resudalGraph, start, finish);
+        LinkedList<Node> way = AStar(resudalGraph, start, finish, false);
 
         int stop = 0;
         while (way != null)
@@ -214,7 +211,7 @@ public static class Analysis
 
             resudalGraph = ResudalGraph(resudalGraph);
 
-            way = AStar(resudalGraph, start, finish);
+            way = AStar(resudalGraph, start, finish, false);
         }
 
         // перенос инфы из остаточного графа в основной
@@ -321,28 +318,50 @@ public static class Analysis
     // временные затраты от загружености дороги
     public static float BPR(Edge edge)
     {
-        float tFreeFlow = edge.weight / edge.speedLimit;
+        float tFreeFlow = edge.distance / edge.speedLimit;
 
         return tFreeFlow * (1 + mu * Mathf.Pow(edge.flow / edge.capacity, n));
     }
 
 
-    // розподіл потоку по шляхам
-    public static void FlowDistribution(LinkedList<Node>[] ways, float odFLow,  Graph graph, float accuracy=50)
+    private static bool WaySetBalansed(List<LinkedList<Node>> waysSet, float accuracy, Graph graph)
     {
-        if (ways.Length == 1)
+        if (waysSet.Count == 1)
         {
-            ModifyWay(ways[0], odFLow);
+            return true;
+        }
+
+        // для кожного шляху знайдемо ціну
+        float[] waysPrices = new float[waysSet.Count];
+        for (int i = 0; i < waysSet.Count; i++)
+        {
+            waysPrices[i] = WayPrice(waysSet[i], graph);
+        }
+        // ціна найдовшого та найшвидшого шляхів
+        float maxWayPrice = waysPrices.Max();
+        float minWayPrice = waysPrices.Min();
+
+        return (maxWayPrice - minWayPrice) < accuracy ? true : false;
+    }
+
+    // розподіл потоку по шляхам
+    public static void SmallBalance(List<LinkedList<Node>> waySets, float odFLow,  Graph graph, float accuracy=50)
+    {
+        // на першому кроці рішення тривіальне
+        if (waySets.Count == 1)
+        {
+            ModifyWay(waySets[0], odFLow);
         }
         else
         {
             float flowDifference = Mathf.Infinity;
             while (flowDifference > accuracy)
             {
-                float[] waysPrices = new float[ways.Length];
-                for (int i = 0; i < ways.Length; i++)
+                // для кожного шляху знайдемо ціну
+                float[] waysPrices = new float[waySets.Count];
+                for (int i = 0; i < waySets.Count; i++)
                 {
-                    waysPrices[i] = WayPrice(ways[i]);
+                    waysPrices[i] = WayPrice(waySets[i], graph);
                 }
                 // номер найдовшого та найшвидшого шляхів
                 float maxWayPrice = waysPrices.Max();
@@ -353,8 +372,8 @@ public static class Analysis
 
                 flowDifference = maxWayPrice - minWayPrice;
 
-                ModifyWay(ways[maxWayIndex], -flowDifference / 2);
-                ModifyWay(ways[minxWayIndex], flowDifference / 2);
+                ModifyWay(waySets[maxWayIndex], -flowDifference / 2);
+                ModifyWay(waySets[minxWayIndex], flowDifference / 2);
             }
 
         }
@@ -368,18 +387,66 @@ public static class Analysis
                 graph.nodeList[node.Value][node.Next.Value].flow += flow;
             }
         }
+    }
 
-        float WayPrice(LinkedList<Node> way)
+    private static float WayPrice(LinkedList<Node> way, Graph graph)
+    {
+        float sumPrice = 0;
+        for (LinkedListNode<Node> node = way.First; node.Next != null; node = node.Next)
         {
-            float sumPrice = 0;
-            for (LinkedListNode<Node> node = way.First; node.Next != null; node = node.Next)
-            {
-                // sumCost += graph.nodeList[node.Value][node.Next.Value].weight;
-                sumPrice += BPR(graph.nodeList[node.Value][node.Next.Value]);
-            }
-
-            return sumPrice;
+            // sumCost += graph.nodeList[node.Value][node.Next.Value].weight;
+            sumPrice += BPR(graph.nodeList[node.Value][node.Next.Value]);
         }
 
+        return sumPrice;
+    }
+
+
+
+    public static void BigBalance((Node, Node, float)[] ODpaars, Graph graph)
+    {
+        // колво пучков = колву пар, каждый пучек это динамично изменяемый набор путей
+        List<LinkedList<Node>>[] waySets = new List<LinkedList<Node>>[ODpaars.Length];
+
+        // стартові пучки по пустій мережі 
+        for (int i = 0; i < waySets.Length; i++)
+        {
+            waySets[i].Add(AStar(graph, ODpaars[i].Item1, ODpaars[i].Item2, false));
+            SmallBalance(waySets[i], ODpaars[i].Item3, graph);
+        }
+
+        // алгоритм працює доки можна додати новий шлях хочаб до однієй пари
+        bool newWayExistsKey = true;
+        while (newWayExistsKey)
+        {
+            newWayExistsKey = false;
+            for (int i = 0; i < waySets.Length; i++)
+            {
+                LinkedList<Node> newWay = AStar(graph, ODpaars[i].Item1, ODpaars[i].Item2, true);
+                if (!waySets[i].Contains(newWay))
+                {
+                    newWayExistsKey = true;
+                    waySets[i].Add(newWay);
+                }
+            }
+
+            // коли усі пучки збалансовані - розширюємо їх
+            bool allSetsBalancedKey = false;
+            while (!allSetsBalancedKey)
+            {
+                allSetsBalancedKey = true;
+
+                // перебираємо усі пучки
+                for (int j = 0; j < waySets.Length; j++)
+                {
+                    if (!WaySetBalansed(waySets[j], 50, graph))
+                    {
+                        // якщо хочаб один незбалансований - ітерація повториться по усіх
+                        allSetsBalancedKey = false;
+                        SmallBalance(waySets[j], ODpaars[j].Item3, graph);
+                    }
+                }
+            }
+        }
     }
 }

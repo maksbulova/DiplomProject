@@ -7,6 +7,11 @@ using UnityEngine.UI;
 [ExecuteAlways]
 public class Node : MonoBehaviour
 {
+    [Header("Параметри генерації потоку")]
+    public float source;
+    public float sink;
+
+    [Space, Header("Параметри мережі")]
     public Graph manualGraph;
     public List<Edge> edgeList = new List<Edge>();
     

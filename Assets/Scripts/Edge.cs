@@ -20,7 +20,7 @@ public class Edge : MonoBehaviour
     [Space, Header("Технічні дані (readonly!)")] // заприватить мб
     public float flow;
     public float capacity;
-    public float weight;
+    public float distance;
     public Edge oppositeLine;
 
     private Text capacityInputField;
@@ -204,7 +204,7 @@ public class Edge : MonoBehaviour
 
     public void CalculateWeight()
     {
-        weight = (nodeA.transform.position - nodeB.transform.position).magnitude * 0.579f; // scale fix
+        distance = (nodeA.transform.position - nodeB.transform.position).magnitude * 0.579f; // scale fix
     }
 
     public void SetFlowText()
