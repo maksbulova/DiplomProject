@@ -405,6 +405,8 @@ public static class Analysis
 
     public static void BigBalance((Node, Node, float)[] ODpaars, Graph graph)
     {
+        graph.ReGraph();
+
         // колво пучков = колву пар, каждый пучек это динамично изменяемый набор путей
         List<LinkedList<Node>>[] waySets = new List<LinkedList<Node>>[ODpaars.Length];
 
@@ -448,5 +450,15 @@ public static class Analysis
                 }
             }
         }
+
+        foreach (KeyValuePair<Node, Dictionary<Node, Edge>> node in graph.nodeList)
+        {
+            foreach (Edge edge in node.Value.Values)
+            {
+                edge.SetFlowText();
+                edge.FlowColor();
+            }
+        }
+
     }
 }
