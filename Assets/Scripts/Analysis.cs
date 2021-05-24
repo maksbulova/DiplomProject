@@ -407,13 +407,24 @@ public static class Analysis
     {
         graph.ReGraph();
 
+        foreach (Dictionary<Node, Edge> node in graph.nodeList.Values)
+        {
+            foreach (Edge edge in node.Values)
+            {
+                edge.flow = 0;
+                edge.FlowColor();
+            }
+        }
+
         // колво пучков = колву пар, каждый пучек это динамично изменяемый набор путей
         List<LinkedList<Node>>[] waySets = new List<LinkedList<Node>>[ODpaars.Length];
 
         // стартові пучки по пустій мережі 
         for (int i = 0; i < waySets.Length; i++)
         {
-            waySets[i].Add(AStar(graph, ODpaars[i].Item1, ODpaars[i].Item2, false));
+            LinkedList<Node> newWay = AStar(graph, ODpaars[i].Item1, ODpaars[i].Item2, false);
+            waySets[i] = new List<LinkedList<Node>>();
+            waySets[i].Add(newWay);
             SmallBalance(waySets[i], ODpaars[i].Item3, graph);
         }
 
@@ -425,7 +436,7 @@ public static class Analysis
             for (int i = 0; i < waySets.Length; i++)
             {
                 LinkedList<Node> newWay = AStar(graph, ODpaars[i].Item1, ODpaars[i].Item2, true);
-                if (!waySets[i].Contains(newWay))
+                if (!WayExists(waySets[i], newWay))
                 {
                     newWayExistsKey = true;
                     waySets[i].Add(newWay);
@@ -460,5 +471,17 @@ public static class Analysis
             }
         }
 
+
+        bool WayExists(List<LinkedList<Node>> waySet, LinkedList<Node> way)
+        {
+            // waySets[i].Contains(newWay) не працював, довелося замінити цією фією
+
+            foreach (LinkedList<Node> w in waySet)
+            {
+                if (Enumerable.SequenceEqual(w, way))
+                    return true;
+            }
+            return false;
+        }
     }
 }
