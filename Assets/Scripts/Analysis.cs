@@ -110,8 +110,17 @@ public static class Analysis
                     // оцениваем соседей и добавляем в очередь с приоритетом (фронтир)
                     if (!frontier.Contains(neighbour.Key) && !closed.Contains(neighbour.Key))
                     {
+                        float weight;
                         // данные о соседе: откуда мы в него пришли и сколько это стоило (вес или BPR)
-                        float weight = (loaded ? BPR(graph.nodeList[current][neighbour.Key]) : graph.nodeList[current][neighbour.Key].distance);
+                        if (loaded)
+                        {
+                            weight = BPR(graph.nodeList[current][neighbour.Key]);
+                        }
+                        else
+                        {
+                            weight = (graph.nodeList[current][neighbour.Key].distance /
+                                graph.nodeList[current][neighbour.Key].speedLimit);
+                        }
                         info.Add(neighbour.Key, (current, info[current].Item2 + weight));
                         frontier.Enqueue(neighbour.Key, f(neighbour.Key));
                     }
@@ -345,23 +354,28 @@ public static class Analysis
     }
 
     // розподіл потоку по шляхам
-    public static void SmallBalance(List<LinkedList<Node>> waySets, float odFLow,  Graph graph, float accuracy=50)
+    public static void SmallBalance(List<LinkedList<Node>> waySet, float odFLow,  Graph graph, float accuracy=50)
     {
+        int errorKey = 0;
+
         // на першому кроці рішення тривіальне
-        if (waySets.Count == 1)
+        if (waySet.Count == 1)
         {
-            ModifyWay(waySets[0], odFLow);
+            // весь потік закачуємо у прямий шлях
+            ModifyWay(waySet[0], odFLow);
         }
         else
         {
             float flowDifference = Mathf.Infinity;
-            while (flowDifference > accuracy)
+            while (flowDifference > accuracy && errorKey < 100)
             {
+                errorKey++;
+
                 // для кожного шляху знайдемо ціну
-                float[] waysPrices = new float[waySets.Count];
-                for (int i = 0; i < waySets.Count; i++)
+                float[] waysPrices = new float[waySet.Count];
+                for (int i = 0; i < waySet.Count; i++)
                 {
-                    waysPrices[i] = WayPrice(waySets[i], graph);
+                    waysPrices[i] = WayPrice(waySet[i], graph);
                 }
                 // номер найдовшого та найшвидшого шляхів
                 float maxWayPrice = waysPrices.Max();
@@ -370,12 +384,19 @@ public static class Analysis
                 int maxWayIndex = waysPrices.ToList().IndexOf(maxWayPrice);
                 int minxWayIndex = waysPrices.ToList().IndexOf(minWayPrice);
 
-                flowDifference = maxWayPrice - minWayPrice;
+                // з найдовшого шляху перерозподіляємо частку потоку на найкоротший шлях
+                // TODO вирішити яку частку переносити
+                float maxWayFlow = graph.nodeList[waySet[maxWayIndex].First.Value][waySet[maxWayIndex].First.Next.Value].flow;
+                float minWayFlow = graph.nodeList[waySet[minxWayIndex].First.Value][waySet[minxWayIndex].First.Next.Value].flow;
+                flowDifference = maxWayFlow - minWayFlow;
 
-                ModifyWay(waySets[maxWayIndex], -flowDifference / 2);
-                ModifyWay(waySets[minxWayIndex], flowDifference / 2);
+                if (flowDifference > accuracy) // TODO перепиши срочно, реализовано ужасно
+                {
+                    ModifyWay(waySet[maxWayIndex], -flowDifference/2);
+                    ModifyWay(waySet[minxWayIndex], flowDifference/2);
+                }
             }
-
+            Debug.Log($"small balance: {errorKey}");
         }
 
         // змінити потік по шляху
@@ -428,10 +449,15 @@ public static class Analysis
             SmallBalance(waySets[i], ODpaars[i].Item3, graph);
         }
 
+        int newWayErrorKey = 0;
+        int BallancedErrorKey = 0;
+
         // алгоритм працює доки можна додати новий шлях хочаб до однієй пари
         bool newWayExistsKey = true;
-        while (newWayExistsKey)
+        while (newWayExistsKey && newWayErrorKey < 100)
         {
+            newWayErrorKey++;
+
             newWayExistsKey = false;
             for (int i = 0; i < waySets.Length; i++)
             {
@@ -445,8 +471,9 @@ public static class Analysis
 
             // коли усі пучки збалансовані - розширюємо їх
             bool allSetsBalancedKey = false;
-            while (!allSetsBalancedKey)
+            while (!allSetsBalancedKey && BallancedErrorKey < 100)
             {
+                BallancedErrorKey++;
                 allSetsBalancedKey = true;
 
                 // перебираємо усі пучки
@@ -461,6 +488,9 @@ public static class Analysis
                 }
             }
         }
+
+        Debug.Log($"new way key: {newWayErrorKey}");
+        Debug.Log($"ballanced key: {BallancedErrorKey}");
 
         foreach (KeyValuePair<Node, Dictionary<Node, Edge>> node in graph.nodeList)
         {
