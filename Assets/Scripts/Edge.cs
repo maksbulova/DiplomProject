@@ -42,6 +42,11 @@ public class Edge : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        transform.SetParent(GameObject.Find("Edge container").transform);
+
+    }
 
 
     [ContextMenu("Reboot")]

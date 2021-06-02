@@ -27,12 +27,13 @@ public class Node : MonoBehaviour
 
     private void Start()
     {
+        transform.SetParent(GameObject.Find("Node container").transform);
+
         ManualInit();
     }
 
     public void Initialize(Graph graph)
     {
-
         graph.AddNode(this);
         manualGraph = graph;
     }
