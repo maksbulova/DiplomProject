@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEditor;
 
 
 [ExecuteAlways]
@@ -27,7 +28,7 @@ public class Node : MonoBehaviour
 
     private void Start()
     {
-        transform.SetParent(GameObject.Find("Node container").transform);
+        // transform.SetParent(GameObject.Find("Node container").transform);
 
         ManualInit();
     }
