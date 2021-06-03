@@ -344,7 +344,7 @@ public static class Analysis
         float[] waysPrices = new float[waysSet.Count];
         for (int i = 0; i < waysSet.Count; i++)
         {
-            waysPrices[i] = WayPrice(waysSet[i], graph);
+            waysPrices[i] = WayPrice(waysSet[i], true, graph);
         }
         // ціна найдовшого та найшвидшого шляхів
         float maxWayPrice = waysPrices.Max();
@@ -375,7 +375,7 @@ public static class Analysis
                 float[] waysPrices = new float[waySet.Count];
                 for (int i = 0; i < waySet.Count; i++)
                 {
-                    waysPrices[i] = WayPrice(waySet[i], graph);
+                    waysPrices[i] = WayPrice(waySet[i], true, graph);
                 }
                 // номер найдовшого та найшвидшого шляхів
                 float maxWayPrice = waysPrices.Max();
@@ -396,7 +396,7 @@ public static class Analysis
                     ModifyWay(waySet[minxWayIndex], flowDifference/2);
                 }
             }
-            Debug.Log($"small balance: {errorKey}");
+            // Debug.Log($"small balance: {errorKey}");
         }
 
         // змінити потік по шляху
@@ -410,13 +410,20 @@ public static class Analysis
         }
     }
 
-    private static float WayPrice(LinkedList<Node> way, Graph graph)
+    private static float WayPrice(LinkedList<Node> way, bool loaded, Graph graph)
     {
         float sumPrice = 0;
         for (LinkedListNode<Node> node = way.First; node.Next != null; node = node.Next)
         {
-            // sumCost += graph.nodeList[node.Value][node.Next.Value].weight;
-            sumPrice += BPR(graph.nodeList[node.Value][node.Next.Value]);
+            if (loaded)
+            {
+                sumPrice += BPR(graph.nodeList[node.Value][node.Next.Value]);
+            }
+            else
+            {
+                sumPrice += graph.nodeList[node.Value][node.Next.Value].distance;
+            }
+            
         }
 
         return sumPrice;
@@ -489,8 +496,23 @@ public static class Analysis
             }
         }
 
-        Debug.Log($"new way key: {newWayErrorKey}");
-        Debug.Log($"ballanced key: {BallancedErrorKey}");
+        // Debug.Log($"new way key: {newWayErrorKey}");
+        // Debug.Log($"ballanced key: {BallancedErrorKey}");
+
+        float freeTime = 0;
+        float congestionTime = 0;
+
+        foreach (List<LinkedList<Node>> set in waySets)
+        {
+            foreach (LinkedList<Node> way in set)
+            {
+                freeTime += WayPrice(way, false, graph);
+                congestionTime += WayPrice(way, true, graph);
+            }
+        }
+        float congestionLvl = (congestionTime - freeTime) / freeTime;
+
+        Debug.Log($"Congestion level: {congestionLvl}%");
 
         foreach (KeyValuePair<Node, Dictionary<Node, Edge>> node in graph.nodeList)
         {
