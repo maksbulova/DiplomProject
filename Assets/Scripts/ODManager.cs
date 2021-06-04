@@ -8,6 +8,23 @@ public class ODManager : MonoBehaviour
     public GameObject linePrefab;
     public District[] districts;
 
+    [ContextMenu("Population")]
+
+    public void CheckPopulation()
+    {
+        int population = 0; 
+        int workers = 0; 
+
+        foreach (District district in districts)
+        {
+            population += district.population;
+            workers += district.workers;
+        }
+
+        Debug.Log($"Мешканців: {population}");
+        Debug.Log($"Робочих місць: {workers}");
+        Debug.Log($"Різниця: {population - workers}");
+    }
     
     public void VisualizeOD()
     {
