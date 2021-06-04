@@ -437,7 +437,7 @@ public static class Analysis
 
 
 
-    public static void BigBalance((Node, Node, float)[] ODpaars, Graph graph)
+    public static void BigBalance(List<(Node, Node, float)> ODpaars, Graph graph)
     {
         graph.ReGraph();
 
@@ -451,7 +451,7 @@ public static class Analysis
         }
 
         // колво пучков = колву пар, каждый пучек это динамично изменяемый набор путей
-        List<LinkedList<Node>>[] waySets = new List<LinkedList<Node>>[ODpaars.Length];
+        List<LinkedList<Node>>[] waySets = new List<LinkedList<Node>>[ODpaars.Count];
 
         // стартові пучки по пустій мережі 
         for (int i = 0; i < waySets.Length; i++)

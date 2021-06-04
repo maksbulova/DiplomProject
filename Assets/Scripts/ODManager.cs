@@ -38,8 +38,8 @@ public class ODManager : MonoBehaviour
                 Debug.Log($"З {districts[i].name} в {districts[j].name}: {od[i, j]}");
             }
         }
-        
     }
+
     public void VisualizeOD()
     {
         float[,] od = Analysis.GenerateOD(districts, graph);
@@ -73,5 +73,34 @@ public class ODManager : MonoBehaviour
             pos /= district.nodes.Count;
             return pos;
         }
+    }
+
+    public void DistributeFlows()
+    {
+        float[,] odMatrix = Analysis.GenerateOD(districts, graph);
+
+        List<(Node, Node, float)> ODpaars = new List<(Node, Node, float)>();
+
+        for (int i = 0; i < districts.Length; i++)
+        {
+            for (int j = 0; j < districts.Length; j++)
+            {
+                if (i != j)
+                {
+                    int paarAmount = districts[i].nodes.Count * districts[j].nodes.Count;
+                    float flow = odMatrix[i, j] / paarAmount;
+
+                    foreach (Node from in districts[i].nodes)
+                    {
+                        foreach (Node to in districts[j].nodes)
+                        {
+                            ODpaars.Add((from, to, flow));
+                        }
+                    }
+                }
+            }
+        }
+
+        Analysis.BigBalance(ODpaars, graph);
     }
 }
