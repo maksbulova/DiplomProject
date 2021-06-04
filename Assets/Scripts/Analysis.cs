@@ -536,4 +536,93 @@ public static class Analysis
             return false;
         }
     }
+
+
+    public static float[,] GenerateOD(District[] districts, Graph graph, float accuracy = 50f)
+    {
+        float[,] odMatrix = new float[districts.Length, districts.Length];
+
+        // функція прибалюваності шляху між районами
+        float fNodes(Node from, Node to, float beta=0.065f)
+        {
+            return Mathf.Exp(-beta * WayPrice(AStar(graph, from, to, false), false, graph));
+        }
+
+        float fDistricts(District from, District to, float beta=0.065f)
+        {
+            float averageF = 0;
+            int steps = 0;
+
+            foreach (Node fromNode in from.nodes)
+            {
+                foreach (Node toNode in to.nodes)
+                {
+                    averageF += fNodes(fromNode, toNode, beta);
+                    steps++;
+                }
+            }
+            averageF /= steps;
+            return averageF;
+        }
+
+        // заповнили матрицю прибавливістю шляхів між районами
+        for (int i = 0; i < districts.Length; i++)
+        {
+            for (int j = 0; j < districts.Length; j++)
+            {
+                odMatrix[i, j] = fDistricts(districts[i], districts[j]);
+            }
+        }
+
+        int infStop = 0;
+        float changeFactor;
+        do
+        {
+            infStop++;
+
+            // критерій зупинки, цей коофи повинні збігатися до 1
+            changeFactor = 0;
+
+            for (int i = 0; i < districts.Length; i++)
+            {
+                float rowSum = 0;
+                for (int j = 0; j < districts.Length; j++)
+                {
+                    rowSum += odMatrix[i, j];
+                }
+
+                for (int j = 0; j < districts.Length; j++)
+                {
+                    float koof = districts[i].population / rowSum;
+                    odMatrix[i, j] *= koof;
+
+                    changeFactor += koof;
+                }
+            }
+
+            for (int j = 0; j < districts.Length; j++)
+            {
+                float colSum = 0;
+                for (int i = 0; i < districts.Length; i++)
+                {
+                    colSum += odMatrix[i, j];
+                }
+
+                for (int i = 0; i < districts.Length; i++)
+                {
+                    float koof = districts[i].workers / colSum;
+                    odMatrix[i, j] *= koof;
+
+                    changeFactor += koof;
+                }
+            }
+
+            changeFactor /= districts.Length;
+
+        } while (Mathf.Abs(changeFactor - 1) > accuracy && infStop < 100);
+
+
+        return odMatrix;
+    }
+
 }
