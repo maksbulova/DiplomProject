@@ -412,6 +412,12 @@ public static class Analysis
 
     private static float WayPrice(LinkedList<Node> way, bool loaded, Graph graph)
     {
+        if (way == null)
+        {
+            Debug.Log("не найден путь");
+            return Mathf.Infinity;
+        }
+
         float sumPrice = 0;
         for (LinkedListNode<Node> node = way.First; node.Next != null; node = node.Next)
         {
@@ -540,16 +546,25 @@ public static class Analysis
 
     public static float[,] GenerateOD(District[] districts, Graph graph, float accuracy = 50f)
     {
+        graph.ReGraph();
+
         float[,] odMatrix = new float[districts.Length, districts.Length];
 
-        // функція прибалюваності шляху між районами
+        // функція прибалюваності шляху між вузлами
         float fNodes(Node from, Node to, float beta=0.065f)
         {
-            return Mathf.Exp(-beta * WayPrice(AStar(graph, from, to, false), false, graph));
+            //Debug.Log($"З вузла {from} у вузол {to}");
+            LinkedList<Node> way = AStar(graph, from, to, false);
+            float price = WayPrice(way, false, graph);
+            float f = Mathf.Exp(-beta * price);
+            return f;
         }
 
+        // середня привабливість шляху між районами
         float fDistricts(District from, District to, float beta=0.065f)
         {
+            // Debug.Log($"З району {from} в район {to}");
+
             float averageF = 0;
             int steps = 0;
 
@@ -570,9 +585,14 @@ public static class Analysis
         {
             for (int j = 0; j < districts.Length; j++)
             {
-                odMatrix[i, j] = fDistricts(districts[i], districts[j]);
+                if (i != j)
+                {
+                    odMatrix[i, j] = fDistricts(districts[i], districts[j]);
+                }
             }
         }
+
+        Debug.Log("Перший крок пройшли");
 
         int infStop = 0;
         float changeFactor;

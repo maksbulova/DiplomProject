@@ -9,7 +9,6 @@ public class ODManager : MonoBehaviour
     public District[] districts;
 
     [ContextMenu("Population")]
-
     public void CheckPopulation()
     {
         int population = 0; 
@@ -25,7 +24,22 @@ public class ODManager : MonoBehaviour
         Debug.Log($"Робочих місць: {workers}");
         Debug.Log($"Різниця: {population - workers}");
     }
-    
+
+    [ContextMenu("GenerateOD")]
+    public void GenerateOD()
+    {
+        float[,] od = Analysis.GenerateOD(districts, graph);
+
+        
+        for (int i = 0; i < districts.Length; i++)
+        {
+            for (int j = 0; j < districts.Length; j++)
+            {
+                Debug.Log($"З {districts[i].name} в {districts[j].name}: {od[i, j]}");
+            }
+        }
+        
+    }
     public void VisualizeOD()
     {
         float[,] od = Analysis.GenerateOD(districts, graph);
