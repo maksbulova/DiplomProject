@@ -427,7 +427,7 @@ public static class Analysis
             }
             else
             {
-                sumPrice += graph.nodeList[node.Value][node.Next.Value].distance;
+                sumPrice += graph.nodeList[node.Value][node.Next.Value].distance / graph.nodeList[node.Value][node.Next.Value].speedLimit;
             }
             
         }
@@ -553,10 +553,11 @@ public static class Analysis
         // функція прибалюваності шляху між вузлами
         float fNodes(Node from, Node to, float beta=0.065f)
         {
+            float scale = 10;
             //Debug.Log($"З вузла {from} у вузол {to}");
             LinkedList<Node> way = AStar(graph, from, to, false);
             float price = WayPrice(way, false, graph);
-            float f = Mathf.Exp(-beta * price);
+            float f = Mathf.Exp(-beta * price / scale);
             return f;
         }
 
@@ -591,8 +592,6 @@ public static class Analysis
                 }
             }
         }
-
-        Debug.Log("Перший крок пройшли");
 
         int infStop = 0;
         float changeFactor;

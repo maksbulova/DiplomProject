@@ -54,7 +54,8 @@ public class ODManager : MonoBehaviour
                     Vector3 posB = districtPosition(districts[j]);
 
                     LineRenderer line = Instantiate(linePrefab, districts[i].transform).GetComponent<LineRenderer>();
-                    line.widthMultiplier = od[i, j];
+                    float t = Mathf.InverseLerp(10000, 50000, od[i, j]);
+                    line.widthMultiplier = Mathf.Lerp(100, 800, t);
 
                     Vector3[] points = new Vector3[2] { posA, posB };
                     line.SetPositions(points);
