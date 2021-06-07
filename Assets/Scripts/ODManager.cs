@@ -35,9 +35,30 @@ public class ODManager : MonoBehaviour
         {
             for (int j = 0; j < districts.Length; j++)
             {
-                Debug.Log($"З {districts[i].name} в {districts[j].name}: {od[i, j]}");
+                Debug.Log($"З {districts[i].name} в {districts[j].name}: {od[i, j]} од.");
             }
         }
+        
+        /*
+        string matrix = "            ";
+
+        for (int i = 0; i < districts.Length; i++)
+        {
+            matrix += districts[i].name + "      ";
+        }
+
+
+        for (int i = 0; i < districts.Length; i++)
+        {
+            matrix += districts[i].name;
+            for (int j = 0; j < districts.Length; j++)
+            {
+                matrix += od[i, j] + "      ";
+            }
+            matrix += System.Environment.NewLine;
+        }
+        Debug.Log(matrix);
+        */
     }
 
     public void VisualizeOD()
@@ -54,8 +75,8 @@ public class ODManager : MonoBehaviour
                     Vector3 posB = districtPosition(districts[j]);
 
                     LineRenderer line = Instantiate(linePrefab, districts[i].transform).GetComponent<LineRenderer>();
-                    float t = Mathf.InverseLerp(10000, 50000, od[i, j]);
-                    line.widthMultiplier = Mathf.Lerp(100, 800, t);
+                    float t = Mathf.InverseLerp(500, 8000, od[i, j]);
+                    line.widthMultiplier = Mathf.Lerp(100, 1500, t);
 
                     Vector3[] points = new Vector3[2] { posA, posB };
                     line.SetPositions(points);
@@ -99,6 +120,20 @@ public class ODManager : MonoBehaviour
                     }
                 }
             }
+        }
+
+        Analysis.BigBalance(ODpaars, graph);
+    }
+
+
+    public List<Node> nodes;
+    public List<float> flows;
+    public void LocalDistribute()
+    {
+        List<(Node, Node, float)> ODpaars = new List<(Node, Node, float)>();
+        for (int i = 0; i < flows.Count; i++)
+        {
+            ODpaars.Add((nodes[i*2], nodes[i*2 + 1], flows[i]));
         }
 
         Analysis.BigBalance(ODpaars, graph);

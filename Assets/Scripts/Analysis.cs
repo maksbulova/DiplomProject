@@ -321,13 +321,13 @@ public static class Analysis
     }
 
 
-    private static float mu = 0.15f;
+    private static float mu = 1f;
     private static float n = 4;
 
     // временные затраты от загружености дороги
     public static float BPR(Edge edge)
     {
-        float tFreeFlow = edge.distance / edge.speedLimit;
+        float tFreeFlow = edge.distance / (edge.speedLimit * 1000);
 
         return tFreeFlow * (1 + mu * Mathf.Pow(edge.flow / edge.capacity, n));
     }
@@ -427,7 +427,7 @@ public static class Analysis
             }
             else
             {
-                sumPrice += graph.nodeList[node.Value][node.Next.Value].distance / graph.nodeList[node.Value][node.Next.Value].speedLimit;
+                sumPrice += graph.nodeList[node.Value][node.Next.Value].distance / (graph.nodeList[node.Value][node.Next.Value].speedLimit * 1000);
             }
             
         }
@@ -507,18 +507,38 @@ public static class Analysis
 
         float freeTime = 0;
         float congestionTime = 0;
+        float congestionLvl = 0;
 
         foreach (List<LinkedList<Node>> set in waySets)
         {
+            // свободное время для пары узлов источник-сток
+            freeTime = WayPrice(set[0], false, graph);
+            congestionTime = WayPrice(set[0], true, graph);
+            congestionLvl = (congestionTime - freeTime) / freeTime;
+
+            Debug.Log($"Вільний час: {freeTime:F2} год");
+            Debug.Log($"Завантажений час: {congestionTime:F2} год");
+
+            Debug.Log($"Local congestion level: {(congestionLvl * 100):F2}%");
+            /*
+
+            // среднее реальное время для пары
             foreach (LinkedList<Node> way in set)
             {
-                freeTime += WayPrice(way, false, graph);
                 congestionTime += WayPrice(way, true, graph);
             }
-        }
-        float congestionLvl = (congestionTime - freeTime) / freeTime;
+            congestionTime /= set.Count;
+            Debug.Log($"Середній завантажений час: {congestionTime:F2} год");
+            */
 
-        Debug.Log($"Congestion level: {congestionLvl}%");
+            // индекс загрузки для пары
+            congestionLvl += congestionLvl;
+
+            // в пару районов входит много пар узлов
+        }
+        congestionLvl /= waySets.Length;
+        Debug.Log($"Global congestion level: {(congestionLvl * 100):F2}%");
+
 
         foreach (KeyValuePair<Node, Dictionary<Node, Edge>> node in graph.nodeList)
         {
@@ -544,7 +564,7 @@ public static class Analysis
     }
 
 
-    public static float[,] GenerateOD(District[] districts, Graph graph, float accuracy = 50f)
+    public static float[,] GenerateOD(District[] districts, Graph graph, float accuracy = 0.1f)
     {
         graph.ReGraph();
 
@@ -594,51 +614,50 @@ public static class Analysis
         }
 
         int infStop = 0;
-        float changeFactor;
+        // критерій зупинки, цей коофи повинні збігатися до 1
+        float rowCoef = 0;
+        float colCoef = 0;
+
         do
         {
             infStop++;
-
-            // критерій зупинки, цей коофи повинні збігатися до 1
-            changeFactor = 0;
-
+            // перебираємо по джерелу
             for (int i = 0; i < districts.Length; i++)
             {
+                // для кожного стоку
                 float rowSum = 0;
                 for (int j = 0; j < districts.Length; j++)
                 {
                     rowSum += odMatrix[i, j];
                 }
 
+                rowCoef = districts[i].population / rowSum;
+
                 for (int j = 0; j < districts.Length; j++)
                 {
-                    float koof = districts[i].population / rowSum;
-                    odMatrix[i, j] *= koof;
-
-                    changeFactor += koof;
+                    odMatrix[i, j] *= rowCoef;
                 }
             }
 
+            // перебір по стокам
             for (int j = 0; j < districts.Length; j++)
             {
+                // для кожного джерела
                 float colSum = 0;
                 for (int i = 0; i < districts.Length; i++)
                 {
                     colSum += odMatrix[i, j];
                 }
 
+                colCoef = districts[j].workers / colSum;
+
                 for (int i = 0; i < districts.Length; i++)
                 {
-                    float koof = districts[i].workers / colSum;
-                    odMatrix[i, j] *= koof;
-
-                    changeFactor += koof;
+                    odMatrix[i, j] *= colCoef;
                 }
             }
 
-            changeFactor /= districts.Length;
-
-        } while (Mathf.Abs(changeFactor - 1) > accuracy && infStop < 100);
+        } while (Mathf.Max(Mathf.Abs(colCoef - 1), Mathf.Abs(rowCoef - 1)) > accuracy && infStop < 1000);
 
 
         return odMatrix;
