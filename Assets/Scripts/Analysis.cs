@@ -321,7 +321,7 @@ public static class Analysis
     }
 
 
-    private static float mu = 1f;
+    private static float mu = 0.15f;
     private static float n = 4;
 
     // временные затраты от загружености дороги
@@ -410,7 +410,7 @@ public static class Analysis
         }
     }
 
-    private static float WayPrice(LinkedList<Node> way, bool loaded, Graph graph)
+    public static float WayPrice(LinkedList<Node> way, bool loaded, Graph graph)
     {
         if (way == null)
         {
@@ -484,7 +484,7 @@ public static class Analysis
 
             // коли усі пучки збалансовані - розширюємо їх
             bool allSetsBalancedKey = false;
-            while (!allSetsBalancedKey && BallancedErrorKey < 100)
+            while (!allSetsBalancedKey && BallancedErrorKey < 1000)
             {
                 BallancedErrorKey++;
                 allSetsBalancedKey = true;
@@ -505,39 +505,27 @@ public static class Analysis
         // Debug.Log($"new way key: {newWayErrorKey}");
         // Debug.Log($"ballanced key: {BallancedErrorKey}");
 
-        float freeTime = 0;
-        float congestionTime = 0;
-        float congestionLvl = 0;
+        float globalCcongestionLvl = 0;
 
         foreach (List<LinkedList<Node>> set in waySets)
         {
             // свободное время для пары узлов источник-сток
-            freeTime = WayPrice(set[0], false, graph);
-            congestionTime = WayPrice(set[0], true, graph);
-            congestionLvl = (congestionTime - freeTime) / freeTime;
+            float freeTime = WayPrice(set[0], false, graph);
+            float congestionTime = WayPrice(set[0], true, graph);
+            float congestionLvl = (congestionTime - freeTime) / freeTime;
 
+            /*
             Debug.Log($"Вільний час: {freeTime:F2} год");
             Debug.Log($"Завантажений час: {congestionTime:F2} год");
 
             Debug.Log($"Local congestion level: {(congestionLvl * 100):F2}%");
-            /*
-
-            // среднее реальное время для пары
-            foreach (LinkedList<Node> way in set)
-            {
-                congestionTime += WayPrice(way, true, graph);
-            }
-            congestionTime /= set.Count;
-            Debug.Log($"Середній завантажений час: {congestionTime:F2} год");
             */
 
-            // индекс загрузки для пары
-            congestionLvl += congestionLvl;
+            globalCcongestionLvl += congestionLvl;
 
-            // в пару районов входит много пар узлов
         }
-        congestionLvl /= waySets.Length;
-        Debug.Log($"Global congestion level: {(congestionLvl * 100):F2}%");
+        globalCcongestionLvl /= waySets.Length;
+        Debug.Log($"Global congestion level: {(globalCcongestionLvl * 100):F2}%");
 
 
         foreach (KeyValuePair<Node, Dictionary<Node, Edge>> node in graph.nodeList)

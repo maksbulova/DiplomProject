@@ -123,6 +123,49 @@ public class ODManager : MonoBehaviour
         }
 
         Analysis.BigBalance(ODpaars, graph);
+
+
+
+        for (int i = 0; i < districts.Length; i++)
+        {
+            for (int j = 0; j < districts.Length; j++)
+            {
+                if (i != j)
+                {
+                    float averageFreeTime = 0;
+                    float averageContTime = 0;
+                    int avCounter = 0;
+
+                    // среднее время на маршрут между районами
+                    foreach (Node nodeFrom in districts[i].nodes)
+                    {
+                        foreach (Node nodeTo in districts[j].nodes)
+                        {
+                            // LinkedList<Node> way = Analysis.AStar(graph, nodeFrom, nodeTo, true);
+                            averageFreeTime += Analysis.WayPrice(Analysis.AStar(graph, nodeFrom, nodeTo, false), false,  graph);
+                            averageContTime += Analysis.WayPrice(Analysis.AStar(graph, nodeFrom, nodeTo, true), true,  graph);
+
+                            avCounter++;
+                        }
+                    }
+                    averageFreeTime /= avCounter;
+                    averageContTime /= avCounter;
+
+                    float congestionLvl = (averageContTime - averageFreeTime) / averageFreeTime;
+
+                    Debug.Log($"Показники маршрутів з {districts[i]} у {districts[j]}");
+                    Debug.Log($"Об'єм кореспонденції: {odMatrix[i, j]} од.");
+                    Debug.Log($"Вільний час: {averageFreeTime:F2} год");
+                    Debug.Log($"Завантажений час: {averageContTime:F2} год");
+                    Debug.Log($"Congestion level: {(congestionLvl * 100):F2}%");
+                    Debug.Log(System.Environment.NewLine);
+
+                }
+            }
+
+            Debug.Log(System.Environment.NewLine);
+
+        }
     }
 
 
